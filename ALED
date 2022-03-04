@@ -1,0 +1,8 @@
+make
+gcc lex.yy.c -o resultat
+./resultat
+
+
+/// COMMENT ///
+
+METTRE LA FONCTION yylex() DANS MAIN DANS LEX
