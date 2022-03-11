@@ -3,6 +3,10 @@ gcc lex.yy.c -o resultat
 ./resultat
 
 
+
+/// DEBUG ///
+vi y.output
+
 /// COMMENT ///
 
 METTRE LA FONCTION yylex() DANS MAIN DANS LEX

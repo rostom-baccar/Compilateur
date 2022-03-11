@@ -8,29 +8,36 @@
 
 %%
 
-[ \t]+  {printf(" ");}
-","  {printf(",");}
-[\n] {printf("\n");}
-[0-9]+.[0-9]+ {printf("nb");}
-"const" {printf("const int");}
-"int"   {printf("int");}
-"main"  {printf("main");}
-"printf" {printf("printf");}
-"{"     {printf("{");}
-"}"     {printf("}");}
-"("     {printf("(");}
-")"     {printf(")");}
-";" {printf(";");}
-"="	{printf("=");}
-"-"	{printf("-");}
-"+"	{printf("+");}
-"*"	{printf("*");}
-"/"	{printf("/");}
-[a-zA-Z]+[a-zA-Z0-9|_]* {printf("variable");}
+[ \t\n]+  {};
+","  {return tVIRG;}
+[0-9]+(e[0-9]+)? {
+	  yylval.nb = (int) strtold(yytext, NULL);
+	  return tNB;
+	}
+"const" {return tCONST;}
+"int"   {return tINT;}
+"string" {return tSTR;}
+"main"  {return tMAIN;}
+"printf" {return tPRINTF;}
+"{"     {return tAO;}
+"}"     {return tAF;}
+"("     {return tPO;}
+")"     {return tPF;}
+";" {return tPVIRG;}
+"="	{return tEGAL;}
+"-"	{return tSOUS;}
+"+"	{return tADD;}
+"*"	{return tMUL;}
+"/"	{return tDIV;}
+[a-zA-Z]+[a-zA-Z0-9|_]* {
+	  strcpy(yylval.varchar, yytext);
+	  return tID;
+	}
 
-. {printf("?");}
+. {return tERR;}
 
 %%
+/*
 int main()
 {   
     // The function that starts the analysis
@@ -38,3 +45,4 @@ int main()
   
     return 0;
 }
+*/
