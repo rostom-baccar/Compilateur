@@ -1,1080 +1,934 @@
 Terminaux inutilisés dans la grammaire
 
-    tERR
-    tPRINTF
+    tPrint
+    tElse
 
 
-État 83 conflits: 4 décalage/réduction
+État 74 conflits: 4 décalage/réduction
 
 
 Grammaire
 
-    0 $accept: Programme $end
+    0 $accept: Program $end
 
-    1 Programme: Funs
+    1 Program: Functions
 
-    2 Funs: Fun
-    3     | Fun Funs
+    2 Functions: Function
+    3          | Function Functions
 
-    4 Fun: FunType FunName tPO DeclArgs tPF tAO Body tAF
+    4 DecArgs: Type tID NextDecArg
+    5        | %empty
 
-    5 FunCall: FunName tPO CallArgs tPF
+    6 NextDecArg: tV DecArgs
+    7           | %empty
 
-    6 DeclArgs: VarType tID DeclArgNext
-    7         | %empty
+    8 Function: FunType FunName tPO DecArgs tPF tAO Body tAF
 
-    8 DeclArgNext: tVIRG DeclArgs
-    9            | %empty
+    9 FunCall: FunName tPO CallArgs tPF
 
-   10 CallArgs: RightOperand CallArgNext
-   11         | %empty
+   10 FunType: tVoid
+   11        | Type
 
-   12 CallArgNext: tVIRG CallArgs
-   13            | %empty
+   12 FunName: tMain
+   13        | tID
 
-   14 PreType: tCONST
-   15        | %empty
+   14 Type0: tConst
+   15      | %empty
 
-   16 Type: tINT
-   17     | tSTR
+   16 Type: tInt
+   17     | tString
 
-   18 FunType: Type
+   18 CallArgs: Operand CallArgNext
+   19         | %empty
 
-   19 VarType: PreType Type
+   20 CallArgNext: tV CallArgs
+   21            | %empty
 
-   20 FunName: tMAIN
-   21        | tID
+   22 Body: Instructions
 
-   22 Body: Lignes
+   23 Instructions: Instruction Instructions
+   24             | %empty
 
-   23 Lignes: Ligne Lignes
-   24       | %empty
+   25 Instruction: FunCall tPV
+   26            | VarDeclaration tPV
+   27            | VarAssign tPV
+   28            | Condition tAO Body tAF
 
-   25 Ligne: FunCall tPVIRG
-   26      | Declaration tPVIRG
-   27      | Affectation tPVIRG
-   28      | Condition tAO Body tAF
+   29 VarDeclaration: Type0 Type tID
 
-   29 Declaration: VarType tID
+   30 Operand: FunCall
+   31        | Operations
+   32        | tNB
+   33        | tID
 
-   30 RightOperand: FunCall
-   31             | Operations
-   32             | tNB
-   33             | tID
+   34 Operator: tSUB
+   35         | tADD
+   36         | tDIV
+   37         | tMUL
 
-   34 Operateur: tSOUS
-   35          | tADD
-   36          | tDIV
-   37          | tMUL
+   38 Operations: Operand Operator Operand
 
-   38 Operations: RightOperand Operateur RightOperand
-
-   39 Affectation: tID tEGAL RightOperand
+   39 VarAssign: tID tEqual Operand
 
    40 Condition: tIF ArgCondition
-   41          | tWHILE ArgCondition
-   42          | tFOR ForCondition
+   41          | tWhile ArgCondition
 
-   43 ArgCondition: tPO Bool tPF
+   42 ArgCondition: tPO BoolExpression tPF
 
-   44 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF
+   43 BoolExpression: Comparaison
+   44               | tID
 
-   45 DeclarationIndice: Affectation
-   46                  | tID
+   45 Comparator: tINF
+   46           | tSUP
 
-   47 Bool: Comparaison
-   48     | tID
-
-   49 Comparateur: tINF
-   50            | tSUP
-   51            | tINFEG
-   52            | tSUPEG
-
-   53 Comparaison: RightOperand Comparateur RightOperand
+   47 Comparaison: Operand Comparator Operand
 
 
 Terminaux, suivis des règles où ils apparaissent
 
     $end (0) 0
     error (256)
-    tEGAL (258) 39
-    tPO (259) 4 5 43 44
-    tPF (260) 4 5 43 44
-    tAO (261) 4 28
-    tAF (262) 4 28
-    tSOUS (263) 34
-    tADD (264) 35
-    tDIV (265) 36
-    tMUL (266) 37
-    tERR (267)
-    tPRINTF (268)
-    tMAIN (269) 20
-    tINT (270) 16
-    tSTR (271) 17
-    tCONST (272) 14
-    tVIRG (273) 8 12
-    tPVIRG (274) 25 26 27 44
-    tIF (275) 40
-    tWHILE (276) 41
-    tFOR (277) 42
-    tINF (278) 49
-    tSUP (279) 50
-    tINFEG (280) 51
-    tSUPEG (281) 52
-    tNB <nb> (282) 32
-    tID <varchar> (283) 6 21 29 33 39 46 48
+    tMain (258) 12
+    tConst (259) 14
+    tPrint (260)
+    tIF (261) 40
+    tWhile (262) 41
+    tElse (263)
+    tAO (264) 8 28
+    tAF (265) 8 28
+    tPO (266) 8 9 42
+    tPF (267) 8 9 42
+    tV (268) 6 20
+    tPV (269) 25 26 27
+    tEqual (270) 39
+    tVoid (271) 10
+    tInt (272) 16
+    tString (273) 17
+    tSUB (274) 34
+    tADD (275) 35
+    tMUL (276) 37
+    tDIV (277) 36
+    tINF (278) 45
+    tSUP (279) 46
+    tNB <nb> (280) 32
+    tID <string> (281) 4 13 29 33 39 44
 
 
 Non-terminaux, suivis des règles où ils apparaissent
 
-    $accept (29)
+    $accept (27)
         à gauche: 0
-    Programme (30)
+    Program (28)
         à gauche: 1
         à droite: 0
-    Funs (31)
+    Functions (29)
         à gauche: 2 3
         à droite: 1 3
-    Fun (32)
-        à gauche: 4
+    DecArgs (30)
+        à gauche: 4 5
+        à droite: 6 8
+    NextDecArg (31)
+        à gauche: 6 7
+        à droite: 4
+    Function (32)
+        à gauche: 8
         à droite: 2 3
     FunCall (33)
-        à gauche: 5
+        à gauche: 9
         à droite: 25 30
-    DeclArgs (34)
-        à gauche: 6 7
-        à droite: 4 8
-    DeclArgNext (35)
-        à gauche: 8 9
-        à droite: 6
-    CallArgs (36)
+    FunType (34)
         à gauche: 10 11
-        à droite: 5 12
-    CallArgNext (37)
+        à droite: 8
+    FunName (35)
         à gauche: 12 13
-        à droite: 10
-    PreType (38)
+        à droite: 8 9
+    Type0 (36)
         à gauche: 14 15
-        à droite: 19
-    Type (39)
+        à droite: 29
+    Type (37)
         à gauche: 16 17
-        à droite: 18 19
-    FunType (40)
-        à gauche: 18
-        à droite: 4
-    VarType (41)
-        à gauche: 19
-        à droite: 6 29
-    FunName (42)
+        à droite: 4 11 29
+    CallArgs (38)
+        à gauche: 18 19
+        à droite: 9 20
+    CallArgNext (39)
         à gauche: 20 21
-        à droite: 4 5
-    Body (43)
+        à droite: 18
+    Body (40)
         à gauche: 22
-        à droite: 4 28
-    Lignes (44)
+        à droite: 8 28
+    Instructions (41)
         à gauche: 23 24
         à droite: 22 23
-    Ligne (45)
+    Instruction (42)
         à gauche: 25 26 27 28
         à droite: 23
-    Declaration (46)
+    VarDeclaration (43)
         à gauche: 29
         à droite: 26
-    RightOperand (47)
+    Operand (44)
         à gauche: 30 31 32 33
-        à droite: 10 38 39 53
-    Operateur (48)
+        à droite: 18 38 39 47
+    Operator (45)
         à gauche: 34 35 36 37
         à droite: 38
-    Operations (49)
+    Operations (46)
         à gauche: 38
         à droite: 31
-    Affectation (50)
+    VarAssign (47)
         à gauche: 39
-        à droite: 27 44 45
-    Condition (51)
-        à gauche: 40 41 42
+        à droite: 27
+    Condition (48)
+        à gauche: 40 41
         à droite: 28
-    ArgCondition (52)
-        à gauche: 43
+    ArgCondition (49)
+        à gauche: 42
         à droite: 40 41
-    ForCondition (53)
-        à gauche: 44
+    BoolExpression (50)
+        à gauche: 43 44
         à droite: 42
-    DeclarationIndice (54)
+    Comparator (51)
         à gauche: 45 46
-        à droite: 44
-    Bool (55)
-        à gauche: 47 48
-        à droite: 43 44
-    Comparateur (56)
-        à gauche: 49 50 51 52
-        à droite: 53
-    Comparaison (57)
-        à gauche: 53
         à droite: 47
+    Comparaison (52)
+        à gauche: 47
+        à droite: 43
 
 
 État 0
 
-    0 $accept: . Programme $end
+    0 $accept: . Program $end
 
-    tINT  décalage et aller à l'état 1
-    tSTR  décalage et aller à l'état 2
+    tVoid    décalage et aller à l'état 1
+    tInt     décalage et aller à l'état 2
+    tString  décalage et aller à l'état 3
 
-    Programme  aller à l'état 3
-    Funs       aller à l'état 4
-    Fun        aller à l'état 5
-    Type       aller à l'état 6
+    Program    aller à l'état 4
+    Functions  aller à l'état 5
+    Function   aller à l'état 6
     FunType    aller à l'état 7
+    Type       aller à l'état 8
 
 
 État 1
 
-   16 Type: tINT .
+   10 FunType: tVoid .
 
-    $défaut  réduction par utilisation de la règle 16 (Type)
+    $défaut  réduction par utilisation de la règle 10 (FunType)
 
 
 État 2
 
-   17 Type: tSTR .
+   16 Type: tInt .
 
-    $défaut  réduction par utilisation de la règle 17 (Type)
+    $défaut  réduction par utilisation de la règle 16 (Type)
 
 
 État 3
 
-    0 $accept: Programme . $end
+   17 Type: tString .
 
-    $end  décalage et aller à l'état 8
+    $défaut  réduction par utilisation de la règle 17 (Type)
 
 
 État 4
 
-    1 Programme: Funs .
+    0 $accept: Program . $end
 
-    $défaut  réduction par utilisation de la règle 1 (Programme)
+    $end  décalage et aller à l'état 9
 
 
 État 5
 
-    2 Funs: Fun .
-    3     | Fun . Funs
+    1 Program: Functions .
 
-    tINT  décalage et aller à l'état 1
-    tSTR  décalage et aller à l'état 2
-
-    $défaut  réduction par utilisation de la règle 2 (Funs)
-
-    Funs     aller à l'état 9
-    Fun      aller à l'état 5
-    Type     aller à l'état 6
-    FunType  aller à l'état 7
+    $défaut  réduction par utilisation de la règle 1 (Program)
 
 
 État 6
 
-   18 FunType: Type .
+    2 Functions: Function .
+    3          | Function . Functions
 
-    $défaut  réduction par utilisation de la règle 18 (FunType)
+    tVoid    décalage et aller à l'état 1
+    tInt     décalage et aller à l'état 2
+    tString  décalage et aller à l'état 3
+
+    $défaut  réduction par utilisation de la règle 2 (Functions)
+
+    Functions  aller à l'état 10
+    Function   aller à l'état 6
+    FunType    aller à l'état 7
+    Type       aller à l'état 8
 
 
 État 7
 
-    4 Fun: FunType . FunName tPO DeclArgs tPF tAO Body tAF
+    8 Function: FunType . FunName tPO DecArgs tPF tAO Body tAF
 
-    tMAIN  décalage et aller à l'état 10
-    tID    décalage et aller à l'état 11
+    tMain  décalage et aller à l'état 11
+    tID    décalage et aller à l'état 12
 
-    FunName  aller à l'état 12
+    FunName  aller à l'état 13
 
 
 État 8
 
-    0 $accept: Programme $end .
+   11 FunType: Type .
 
-    $défaut  accepter
+    $défaut  réduction par utilisation de la règle 11 (FunType)
 
 
 État 9
 
-    3 Funs: Fun Funs .
+    0 $accept: Program $end .
 
-    $défaut  réduction par utilisation de la règle 3 (Funs)
+    $défaut  accepter
 
 
 État 10
 
-   20 FunName: tMAIN .
+    3 Functions: Function Functions .
 
-    $défaut  réduction par utilisation de la règle 20 (FunName)
+    $défaut  réduction par utilisation de la règle 3 (Functions)
 
 
 État 11
 
-   21 FunName: tID .
+   12 FunName: tMain .
 
-    $défaut  réduction par utilisation de la règle 21 (FunName)
+    $défaut  réduction par utilisation de la règle 12 (FunName)
 
 
 État 12
 
-    4 Fun: FunType FunName . tPO DeclArgs tPF tAO Body tAF
+   13 FunName: tID .
 
-    tPO  décalage et aller à l'état 13
+    $défaut  réduction par utilisation de la règle 13 (FunName)
 
 
 État 13
 
-    4 Fun: FunType FunName tPO . DeclArgs tPF tAO Body tAF
+    8 Function: FunType FunName . tPO DecArgs tPF tAO Body tAF
 
-    tCONST  décalage et aller à l'état 14
-
-    tPF       réduction par utilisation de la règle 7 (DeclArgs)
-    $défaut  réduction par utilisation de la règle 15 (PreType)
-
-    DeclArgs  aller à l'état 15
-    PreType   aller à l'état 16
-    VarType   aller à l'état 17
+    tPO  décalage et aller à l'état 14
 
 
 État 14
 
-   14 PreType: tCONST .
+    8 Function: FunType FunName tPO . DecArgs tPF tAO Body tAF
 
-    $défaut  réduction par utilisation de la règle 14 (PreType)
+    tInt     décalage et aller à l'état 2
+    tString  décalage et aller à l'état 3
+
+    $défaut  réduction par utilisation de la règle 5 (DecArgs)
+
+    DecArgs  aller à l'état 15
+    Type     aller à l'état 16
 
 
 État 15
 
-    4 Fun: FunType FunName tPO DeclArgs . tPF tAO Body tAF
+    8 Function: FunType FunName tPO DecArgs . tPF tAO Body tAF
 
-    tPF  décalage et aller à l'état 18
+    tPF  décalage et aller à l'état 17
 
 
 État 16
 
-   19 VarType: PreType . Type
+    4 DecArgs: Type . tID NextDecArg
 
-    tINT  décalage et aller à l'état 1
-    tSTR  décalage et aller à l'état 2
-
-    Type  aller à l'état 19
+    tID  décalage et aller à l'état 18
 
 
 État 17
 
-    6 DeclArgs: VarType . tID DeclArgNext
+    8 Function: FunType FunName tPO DecArgs tPF . tAO Body tAF
 
-    tID  décalage et aller à l'état 20
+    tAO  décalage et aller à l'état 19
 
 
 État 18
 
-    4 Fun: FunType FunName tPO DeclArgs tPF . tAO Body tAF
+    4 DecArgs: Type tID . NextDecArg
 
-    tAO  décalage et aller à l'état 21
+    tV  décalage et aller à l'état 20
+
+    $défaut  réduction par utilisation de la règle 7 (NextDecArg)
+
+    NextDecArg  aller à l'état 21
 
 
 État 19
 
-   19 VarType: PreType Type .
+    8 Function: FunType FunName tPO DecArgs tPF tAO . Body tAF
 
-    $défaut  réduction par utilisation de la règle 19 (VarType)
+    tMain   décalage et aller à l'état 11
+    tConst  décalage et aller à l'état 22
+    tIF     décalage et aller à l'état 23
+    tWhile  décalage et aller à l'état 24
+    tID     décalage et aller à l'état 25
+
+    tAF       réduction par utilisation de la règle 24 (Instructions)
+    $défaut  réduction par utilisation de la règle 15 (Type0)
+
+    FunCall         aller à l'état 26
+    FunName         aller à l'état 27
+    Type0           aller à l'état 28
+    Body            aller à l'état 29
+    Instructions    aller à l'état 30
+    Instruction     aller à l'état 31
+    VarDeclaration  aller à l'état 32
+    VarAssign       aller à l'état 33
+    Condition       aller à l'état 34
 
 
 État 20
 
-    6 DeclArgs: VarType tID . DeclArgNext
+    6 NextDecArg: tV . DecArgs
 
-    tVIRG  décalage et aller à l'état 22
+    tInt     décalage et aller à l'état 2
+    tString  décalage et aller à l'état 3
 
-    $défaut  réduction par utilisation de la règle 9 (DeclArgNext)
+    $défaut  réduction par utilisation de la règle 5 (DecArgs)
 
-    DeclArgNext  aller à l'état 23
+    DecArgs  aller à l'état 35
+    Type     aller à l'état 16
 
 
 État 21
 
-    4 Fun: FunType FunName tPO DeclArgs tPF tAO . Body tAF
+    4 DecArgs: Type tID NextDecArg .
 
-    tMAIN   décalage et aller à l'état 10
-    tCONST  décalage et aller à l'état 14
-    tIF     décalage et aller à l'état 24
-    tWHILE  décalage et aller à l'état 25
-    tFOR    décalage et aller à l'état 26
-    tID     décalage et aller à l'état 27
-
-    tAF       réduction par utilisation de la règle 24 (Lignes)
-    $défaut  réduction par utilisation de la règle 15 (PreType)
-
-    FunCall      aller à l'état 28
-    PreType      aller à l'état 16
-    VarType      aller à l'état 29
-    FunName      aller à l'état 30
-    Body         aller à l'état 31
-    Lignes       aller à l'état 32
-    Ligne        aller à l'état 33
-    Declaration  aller à l'état 34
-    Affectation  aller à l'état 35
-    Condition    aller à l'état 36
+    $défaut  réduction par utilisation de la règle 4 (DecArgs)
 
 
 État 22
 
-    8 DeclArgNext: tVIRG . DeclArgs
+   14 Type0: tConst .
 
-    tCONST  décalage et aller à l'état 14
-
-    tPF       réduction par utilisation de la règle 7 (DeclArgs)
-    $défaut  réduction par utilisation de la règle 15 (PreType)
-
-    DeclArgs  aller à l'état 37
-    PreType   aller à l'état 16
-    VarType   aller à l'état 17
+    $défaut  réduction par utilisation de la règle 14 (Type0)
 
 
 État 23
 
-    6 DeclArgs: VarType tID DeclArgNext .
+   40 Condition: tIF . ArgCondition
 
-    $défaut  réduction par utilisation de la règle 6 (DeclArgs)
+    tPO  décalage et aller à l'état 36
+
+    ArgCondition  aller à l'état 37
 
 
 État 24
 
-   40 Condition: tIF . ArgCondition
+   41 Condition: tWhile . ArgCondition
 
-    tPO  décalage et aller à l'état 38
+    tPO  décalage et aller à l'état 36
 
-    ArgCondition  aller à l'état 39
+    ArgCondition  aller à l'état 38
 
 
 État 25
 
-   41 Condition: tWHILE . ArgCondition
+   13 FunName: tID .
+   39 VarAssign: tID . tEqual Operand
 
-    tPO  décalage et aller à l'état 38
+    tEqual  décalage et aller à l'état 39
 
-    ArgCondition  aller à l'état 40
+    $défaut  réduction par utilisation de la règle 13 (FunName)
 
 
 État 26
 
-   42 Condition: tFOR . ForCondition
+   25 Instruction: FunCall . tPV
 
-    tPO  décalage et aller à l'état 41
-
-    ForCondition  aller à l'état 42
+    tPV  décalage et aller à l'état 40
 
 
 État 27
 
-   21 FunName: tID .
-   39 Affectation: tID . tEGAL RightOperand
+    9 FunCall: FunName . tPO CallArgs tPF
 
-    tEGAL  décalage et aller à l'état 43
-
-    $défaut  réduction par utilisation de la règle 21 (FunName)
+    tPO  décalage et aller à l'état 41
 
 
 État 28
 
-   25 Ligne: FunCall . tPVIRG
+   29 VarDeclaration: Type0 . Type tID
 
-    tPVIRG  décalage et aller à l'état 44
+    tInt     décalage et aller à l'état 2
+    tString  décalage et aller à l'état 3
+
+    Type  aller à l'état 42
 
 
 État 29
 
-   29 Declaration: VarType . tID
+    8 Function: FunType FunName tPO DecArgs tPF tAO Body . tAF
 
-    tID  décalage et aller à l'état 45
+    tAF  décalage et aller à l'état 43
 
 
 État 30
 
-    5 FunCall: FunName . tPO CallArgs tPF
-
-    tPO  décalage et aller à l'état 46
-
-
-État 31
-
-    4 Fun: FunType FunName tPO DeclArgs tPF tAO Body . tAF
-
-    tAF  décalage et aller à l'état 47
-
-
-État 32
-
-   22 Body: Lignes .
+   22 Body: Instructions .
 
     $défaut  réduction par utilisation de la règle 22 (Body)
 
 
+État 31
+
+   23 Instructions: Instruction . Instructions
+
+    tMain   décalage et aller à l'état 11
+    tConst  décalage et aller à l'état 22
+    tIF     décalage et aller à l'état 23
+    tWhile  décalage et aller à l'état 24
+    tID     décalage et aller à l'état 25
+
+    tAF       réduction par utilisation de la règle 24 (Instructions)
+    $défaut  réduction par utilisation de la règle 15 (Type0)
+
+    FunCall         aller à l'état 26
+    FunName         aller à l'état 27
+    Type0           aller à l'état 28
+    Instructions    aller à l'état 44
+    Instruction     aller à l'état 31
+    VarDeclaration  aller à l'état 32
+    VarAssign       aller à l'état 33
+    Condition       aller à l'état 34
+
+
+État 32
+
+   26 Instruction: VarDeclaration . tPV
+
+    tPV  décalage et aller à l'état 45
+
+
 État 33
 
-   23 Lignes: Ligne . Lignes
+   27 Instruction: VarAssign . tPV
 
-    tMAIN   décalage et aller à l'état 10
-    tCONST  décalage et aller à l'état 14
-    tIF     décalage et aller à l'état 24
-    tWHILE  décalage et aller à l'état 25
-    tFOR    décalage et aller à l'état 26
-    tID     décalage et aller à l'état 27
-
-    tAF       réduction par utilisation de la règle 24 (Lignes)
-    $défaut  réduction par utilisation de la règle 15 (PreType)
-
-    FunCall      aller à l'état 28
-    PreType      aller à l'état 16
-    VarType      aller à l'état 29
-    FunName      aller à l'état 30
-    Lignes       aller à l'état 48
-    Ligne        aller à l'état 33
-    Declaration  aller à l'état 34
-    Affectation  aller à l'état 35
-    Condition    aller à l'état 36
+    tPV  décalage et aller à l'état 46
 
 
 État 34
 
-   26 Ligne: Declaration . tPVIRG
+   28 Instruction: Condition . tAO Body tAF
 
-    tPVIRG  décalage et aller à l'état 49
+    tAO  décalage et aller à l'état 47
 
 
 État 35
 
-   27 Ligne: Affectation . tPVIRG
+    6 NextDecArg: tV DecArgs .
 
-    tPVIRG  décalage et aller à l'état 50
+    $défaut  réduction par utilisation de la règle 6 (NextDecArg)
 
 
 État 36
 
-   28 Ligne: Condition . tAO Body tAF
+   42 ArgCondition: tPO . BoolExpression tPF
 
-    tAO  décalage et aller à l'état 51
+    tMain  décalage et aller à l'état 11
+    tNB    décalage et aller à l'état 48
+    tID    décalage et aller à l'état 49
+
+    FunCall         aller à l'état 50
+    FunName         aller à l'état 27
+    Operand         aller à l'état 51
+    Operations      aller à l'état 52
+    BoolExpression  aller à l'état 53
+    Comparaison     aller à l'état 54
 
 
 État 37
-
-    8 DeclArgNext: tVIRG DeclArgs .
-
-    $défaut  réduction par utilisation de la règle 8 (DeclArgNext)
-
-
-État 38
-
-   43 ArgCondition: tPO . Bool tPF
-
-    tMAIN  décalage et aller à l'état 10
-    tNB    décalage et aller à l'état 52
-    tID    décalage et aller à l'état 53
-
-    FunCall       aller à l'état 54
-    FunName       aller à l'état 30
-    RightOperand  aller à l'état 55
-    Operations    aller à l'état 56
-    Bool          aller à l'état 57
-    Comparaison   aller à l'état 58
-
-
-État 39
 
    40 Condition: tIF ArgCondition .
 
     $défaut  réduction par utilisation de la règle 40 (Condition)
 
 
-État 40
+État 38
 
-   41 Condition: tWHILE ArgCondition .
+   41 Condition: tWhile ArgCondition .
 
     $défaut  réduction par utilisation de la règle 41 (Condition)
 
 
+État 39
+
+   39 VarAssign: tID tEqual . Operand
+
+    tMain  décalage et aller à l'état 11
+    tNB    décalage et aller à l'état 48
+    tID    décalage et aller à l'état 55
+
+    FunCall     aller à l'état 50
+    FunName     aller à l'état 27
+    Operand     aller à l'état 56
+    Operations  aller à l'état 52
+
+
+État 40
+
+   25 Instruction: FunCall tPV .
+
+    $défaut  réduction par utilisation de la règle 25 (Instruction)
+
+
 État 41
 
-   44 ForCondition: tPO . DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF
+    9 FunCall: FunName tPO . CallArgs tPF
 
-    tID  décalage et aller à l'état 59
+    tMain  décalage et aller à l'état 11
+    tNB    décalage et aller à l'état 48
+    tID    décalage et aller à l'état 55
 
-    Affectation        aller à l'état 60
-    DeclarationIndice  aller à l'état 61
+    $défaut  réduction par utilisation de la règle 19 (CallArgs)
+
+    FunCall     aller à l'état 50
+    FunName     aller à l'état 27
+    CallArgs    aller à l'état 57
+    Operand     aller à l'état 58
+    Operations  aller à l'état 52
 
 
 État 42
 
-   42 Condition: tFOR ForCondition .
+   29 VarDeclaration: Type0 Type . tID
 
-    $défaut  réduction par utilisation de la règle 42 (Condition)
+    tID  décalage et aller à l'état 59
 
 
 État 43
 
-   39 Affectation: tID tEGAL . RightOperand
+    8 Function: FunType FunName tPO DecArgs tPF tAO Body tAF .
 
-    tMAIN  décalage et aller à l'état 10
-    tNB    décalage et aller à l'état 52
-    tID    décalage et aller à l'état 62
-
-    FunCall       aller à l'état 54
-    FunName       aller à l'état 30
-    RightOperand  aller à l'état 63
-    Operations    aller à l'état 56
+    $défaut  réduction par utilisation de la règle 8 (Function)
 
 
 État 44
 
-   25 Ligne: FunCall tPVIRG .
+   23 Instructions: Instruction Instructions .
 
-    $défaut  réduction par utilisation de la règle 25 (Ligne)
+    $défaut  réduction par utilisation de la règle 23 (Instructions)
 
 
 État 45
 
-   29 Declaration: VarType tID .
+   26 Instruction: VarDeclaration tPV .
 
-    $défaut  réduction par utilisation de la règle 29 (Declaration)
+    $défaut  réduction par utilisation de la règle 26 (Instruction)
 
 
 État 46
 
-    5 FunCall: FunName tPO . CallArgs tPF
+   27 Instruction: VarAssign tPV .
 
-    tMAIN  décalage et aller à l'état 10
-    tNB    décalage et aller à l'état 52
-    tID    décalage et aller à l'état 62
-
-    $défaut  réduction par utilisation de la règle 11 (CallArgs)
-
-    FunCall       aller à l'état 54
-    CallArgs      aller à l'état 64
-    FunName       aller à l'état 30
-    RightOperand  aller à l'état 65
-    Operations    aller à l'état 56
+    $défaut  réduction par utilisation de la règle 27 (Instruction)
 
 
 État 47
 
-    4 Fun: FunType FunName tPO DeclArgs tPF tAO Body tAF .
+   28 Instruction: Condition tAO . Body tAF
 
-    $défaut  réduction par utilisation de la règle 4 (Fun)
+    tMain   décalage et aller à l'état 11
+    tConst  décalage et aller à l'état 22
+    tIF     décalage et aller à l'état 23
+    tWhile  décalage et aller à l'état 24
+    tID     décalage et aller à l'état 25
+
+    tAF       réduction par utilisation de la règle 24 (Instructions)
+    $défaut  réduction par utilisation de la règle 15 (Type0)
+
+    FunCall         aller à l'état 26
+    FunName         aller à l'état 27
+    Type0           aller à l'état 28
+    Body            aller à l'état 60
+    Instructions    aller à l'état 30
+    Instruction     aller à l'état 31
+    VarDeclaration  aller à l'état 32
+    VarAssign       aller à l'état 33
+    Condition       aller à l'état 34
 
 
 État 48
 
-   23 Lignes: Ligne Lignes .
+   32 Operand: tNB .
 
-    $défaut  réduction par utilisation de la règle 23 (Lignes)
+    $défaut  réduction par utilisation de la règle 32 (Operand)
 
 
 État 49
 
-   26 Ligne: Declaration tPVIRG .
+   13 FunName: tID .
+   33 Operand: tID .
+   44 BoolExpression: tID .
 
-    $défaut  réduction par utilisation de la règle 26 (Ligne)
+    tPO       réduction par utilisation de la règle 13 (FunName)
+    tPF       réduction par utilisation de la règle 44 (BoolExpression)
+    $défaut  réduction par utilisation de la règle 33 (Operand)
 
 
 État 50
 
-   27 Ligne: Affectation tPVIRG .
+   30 Operand: FunCall .
 
-    $défaut  réduction par utilisation de la règle 27 (Ligne)
+    $défaut  réduction par utilisation de la règle 30 (Operand)
 
 
 État 51
 
-   28 Ligne: Condition tAO . Body tAF
+   38 Operations: Operand . Operator Operand
+   47 Comparaison: Operand . Comparator Operand
 
-    tMAIN   décalage et aller à l'état 10
-    tCONST  décalage et aller à l'état 14
-    tIF     décalage et aller à l'état 24
-    tWHILE  décalage et aller à l'état 25
-    tFOR    décalage et aller à l'état 26
-    tID     décalage et aller à l'état 27
+    tSUB  décalage et aller à l'état 61
+    tADD  décalage et aller à l'état 62
+    tMUL  décalage et aller à l'état 63
+    tDIV  décalage et aller à l'état 64
+    tINF  décalage et aller à l'état 65
+    tSUP  décalage et aller à l'état 66
 
-    tAF       réduction par utilisation de la règle 24 (Lignes)
-    $défaut  réduction par utilisation de la règle 15 (PreType)
-
-    FunCall      aller à l'état 28
-    PreType      aller à l'état 16
-    VarType      aller à l'état 29
-    FunName      aller à l'état 30
-    Body         aller à l'état 66
-    Lignes       aller à l'état 32
-    Ligne        aller à l'état 33
-    Declaration  aller à l'état 34
-    Affectation  aller à l'état 35
-    Condition    aller à l'état 36
+    Operator    aller à l'état 67
+    Comparator  aller à l'état 68
 
 
 État 52
 
-   32 RightOperand: tNB .
+   31 Operand: Operations .
 
-    $défaut  réduction par utilisation de la règle 32 (RightOperand)
+    $défaut  réduction par utilisation de la règle 31 (Operand)
 
 
 État 53
 
-   21 FunName: tID .
-   33 RightOperand: tID .
-   48 Bool: tID .
+   42 ArgCondition: tPO BoolExpression . tPF
 
-    tPO       réduction par utilisation de la règle 21 (FunName)
-    tPF       réduction par utilisation de la règle 48 (Bool)
-    tPVIRG    réduction par utilisation de la règle 48 (Bool)
-    $défaut  réduction par utilisation de la règle 33 (RightOperand)
+    tPF  décalage et aller à l'état 69
 
 
 État 54
 
-   30 RightOperand: FunCall .
+   43 BoolExpression: Comparaison .
 
-    $défaut  réduction par utilisation de la règle 30 (RightOperand)
+    $défaut  réduction par utilisation de la règle 43 (BoolExpression)
 
 
 État 55
 
-   38 Operations: RightOperand . Operateur RightOperand
-   53 Comparaison: RightOperand . Comparateur RightOperand
+   13 FunName: tID .
+   33 Operand: tID .
 
-    tSOUS   décalage et aller à l'état 67
-    tADD    décalage et aller à l'état 68
-    tDIV    décalage et aller à l'état 69
-    tMUL    décalage et aller à l'état 70
-    tINF    décalage et aller à l'état 71
-    tSUP    décalage et aller à l'état 72
-    tINFEG  décalage et aller à l'état 73
-    tSUPEG  décalage et aller à l'état 74
-
-    Operateur    aller à l'état 75
-    Comparateur  aller à l'état 76
+    tPO       réduction par utilisation de la règle 13 (FunName)
+    $défaut  réduction par utilisation de la règle 33 (Operand)
 
 
 État 56
 
-   31 RightOperand: Operations .
+   38 Operations: Operand . Operator Operand
+   39 VarAssign: tID tEqual Operand .
 
-    $défaut  réduction par utilisation de la règle 31 (RightOperand)
+    tSUB  décalage et aller à l'état 61
+    tADD  décalage et aller à l'état 62
+    tMUL  décalage et aller à l'état 63
+    tDIV  décalage et aller à l'état 64
+
+    $défaut  réduction par utilisation de la règle 39 (VarAssign)
+
+    Operator  aller à l'état 67
 
 
 État 57
 
-   43 ArgCondition: tPO Bool . tPF
+    9 FunCall: FunName tPO CallArgs . tPF
 
-    tPF  décalage et aller à l'état 77
+    tPF  décalage et aller à l'état 70
 
 
 État 58
 
-   47 Bool: Comparaison .
+   18 CallArgs: Operand . CallArgNext
+   38 Operations: Operand . Operator Operand
 
-    $défaut  réduction par utilisation de la règle 47 (Bool)
+    tV    décalage et aller à l'état 71
+    tSUB  décalage et aller à l'état 61
+    tADD  décalage et aller à l'état 62
+    tMUL  décalage et aller à l'état 63
+    tDIV  décalage et aller à l'état 64
+
+    $défaut  réduction par utilisation de la règle 21 (CallArgNext)
+
+    CallArgNext  aller à l'état 72
+    Operator     aller à l'état 67
 
 
 État 59
 
-   39 Affectation: tID . tEGAL RightOperand
-   46 DeclarationIndice: tID .
+   29 VarDeclaration: Type0 Type tID .
 
-    tEGAL  décalage et aller à l'état 43
-
-    $défaut  réduction par utilisation de la règle 46 (DeclarationIndice)
+    $défaut  réduction par utilisation de la règle 29 (VarDeclaration)
 
 
 État 60
 
-   45 DeclarationIndice: Affectation .
+   28 Instruction: Condition tAO Body . tAF
 
-    $défaut  réduction par utilisation de la règle 45 (DeclarationIndice)
+    tAF  décalage et aller à l'état 73
 
 
 État 61
 
-   44 ForCondition: tPO DeclarationIndice . tPVIRG Bool tPVIRG Affectation tPF
+   34 Operator: tSUB .
 
-    tPVIRG  décalage et aller à l'état 78
+    $défaut  réduction par utilisation de la règle 34 (Operator)
 
 
 État 62
 
-   21 FunName: tID .
-   33 RightOperand: tID .
+   35 Operator: tADD .
 
-    tPO       réduction par utilisation de la règle 21 (FunName)
-    $défaut  réduction par utilisation de la règle 33 (RightOperand)
+    $défaut  réduction par utilisation de la règle 35 (Operator)
 
 
 État 63
 
-   38 Operations: RightOperand . Operateur RightOperand
-   39 Affectation: tID tEGAL RightOperand .
+   37 Operator: tMUL .
 
-    tSOUS  décalage et aller à l'état 67
-    tADD   décalage et aller à l'état 68
-    tDIV   décalage et aller à l'état 69
-    tMUL   décalage et aller à l'état 70
-
-    $défaut  réduction par utilisation de la règle 39 (Affectation)
-
-    Operateur  aller à l'état 75
+    $défaut  réduction par utilisation de la règle 37 (Operator)
 
 
 État 64
 
-    5 FunCall: FunName tPO CallArgs . tPF
+   36 Operator: tDIV .
 
-    tPF  décalage et aller à l'état 79
+    $défaut  réduction par utilisation de la règle 36 (Operator)
 
 
 État 65
 
-   10 CallArgs: RightOperand . CallArgNext
-   38 Operations: RightOperand . Operateur RightOperand
+   45 Comparator: tINF .
 
-    tSOUS  décalage et aller à l'état 67
-    tADD   décalage et aller à l'état 68
-    tDIV   décalage et aller à l'état 69
-    tMUL   décalage et aller à l'état 70
-    tVIRG  décalage et aller à l'état 80
-
-    $défaut  réduction par utilisation de la règle 13 (CallArgNext)
-
-    CallArgNext  aller à l'état 81
-    Operateur    aller à l'état 75
+    $défaut  réduction par utilisation de la règle 45 (Comparator)
 
 
 État 66
 
-   28 Ligne: Condition tAO Body . tAF
+   46 Comparator: tSUP .
 
-    tAF  décalage et aller à l'état 82
+    $défaut  réduction par utilisation de la règle 46 (Comparator)
 
 
 État 67
 
-   34 Operateur: tSOUS .
+   38 Operations: Operand Operator . Operand
 
-    $défaut  réduction par utilisation de la règle 34 (Operateur)
+    tMain  décalage et aller à l'état 11
+    tNB    décalage et aller à l'état 48
+    tID    décalage et aller à l'état 55
+
+    FunCall     aller à l'état 50
+    FunName     aller à l'état 27
+    Operand     aller à l'état 74
+    Operations  aller à l'état 52
 
 
 État 68
 
-   35 Operateur: tADD .
+   47 Comparaison: Operand Comparator . Operand
 
-    $défaut  réduction par utilisation de la règle 35 (Operateur)
+    tMain  décalage et aller à l'état 11
+    tNB    décalage et aller à l'état 48
+    tID    décalage et aller à l'état 55
+
+    FunCall     aller à l'état 50
+    FunName     aller à l'état 27
+    Operand     aller à l'état 75
+    Operations  aller à l'état 52
 
 
 État 69
 
-   36 Operateur: tDIV .
+   42 ArgCondition: tPO BoolExpression tPF .
 
-    $défaut  réduction par utilisation de la règle 36 (Operateur)
+    $défaut  réduction par utilisation de la règle 42 (ArgCondition)
 
 
 État 70
 
-   37 Operateur: tMUL .
+    9 FunCall: FunName tPO CallArgs tPF .
 
-    $défaut  réduction par utilisation de la règle 37 (Operateur)
+    $défaut  réduction par utilisation de la règle 9 (FunCall)
 
 
 État 71
 
-   49 Comparateur: tINF .
+   20 CallArgNext: tV . CallArgs
 
-    $défaut  réduction par utilisation de la règle 49 (Comparateur)
+    tMain  décalage et aller à l'état 11
+    tNB    décalage et aller à l'état 48
+    tID    décalage et aller à l'état 55
+
+    $défaut  réduction par utilisation de la règle 19 (CallArgs)
+
+    FunCall     aller à l'état 50
+    FunName     aller à l'état 27
+    CallArgs    aller à l'état 76
+    Operand     aller à l'état 58
+    Operations  aller à l'état 52
 
 
 État 72
 
-   50 Comparateur: tSUP .
+   18 CallArgs: Operand CallArgNext .
 
-    $défaut  réduction par utilisation de la règle 50 (Comparateur)
+    $défaut  réduction par utilisation de la règle 18 (CallArgs)
 
 
 État 73
 
-   51 Comparateur: tINFEG .
+   28 Instruction: Condition tAO Body tAF .
 
-    $défaut  réduction par utilisation de la règle 51 (Comparateur)
+    $défaut  réduction par utilisation de la règle 28 (Instruction)
 
 
 État 74
 
-   52 Comparateur: tSUPEG .
+   38 Operations: Operand . Operator Operand
+   38           | Operand Operator Operand .
 
-    $défaut  réduction par utilisation de la règle 52 (Comparateur)
+    tSUB  décalage et aller à l'état 61
+    tADD  décalage et aller à l'état 62
+    tMUL  décalage et aller à l'état 63
+    tDIV  décalage et aller à l'état 64
+
+    tSUB      [réduction par utilisation de la règle 38 (Operations)]
+    tADD      [réduction par utilisation de la règle 38 (Operations)]
+    tMUL      [réduction par utilisation de la règle 38 (Operations)]
+    tDIV      [réduction par utilisation de la règle 38 (Operations)]
+    $défaut  réduction par utilisation de la règle 38 (Operations)
+
+    Operator  aller à l'état 67
 
 
 État 75
 
-   38 Operations: RightOperand Operateur . RightOperand
+   38 Operations: Operand . Operator Operand
+   47 Comparaison: Operand Comparator Operand .
 
-    tMAIN  décalage et aller à l'état 10
-    tNB    décalage et aller à l'état 52
-    tID    décalage et aller à l'état 62
+    tSUB  décalage et aller à l'état 61
+    tADD  décalage et aller à l'état 62
+    tMUL  décalage et aller à l'état 63
+    tDIV  décalage et aller à l'état 64
 
-    FunCall       aller à l'état 54
-    FunName       aller à l'état 30
-    RightOperand  aller à l'état 83
-    Operations    aller à l'état 56
+    $défaut  réduction par utilisation de la règle 47 (Comparaison)
+
+    Operator  aller à l'état 67
 
 
 État 76
 
-   53 Comparaison: RightOperand Comparateur . RightOperand
+   20 CallArgNext: tV CallArgs .
 
-    tMAIN  décalage et aller à l'état 10
-    tNB    décalage et aller à l'état 52
-    tID    décalage et aller à l'état 62
-
-    FunCall       aller à l'état 54
-    FunName       aller à l'état 30
-    RightOperand  aller à l'état 84
-    Operations    aller à l'état 56
-
-
-État 77
-
-   43 ArgCondition: tPO Bool tPF .
-
-    $défaut  réduction par utilisation de la règle 43 (ArgCondition)
-
-
-État 78
-
-   44 ForCondition: tPO DeclarationIndice tPVIRG . Bool tPVIRG Affectation tPF
-
-    tMAIN  décalage et aller à l'état 10
-    tNB    décalage et aller à l'état 52
-    tID    décalage et aller à l'état 53
-
-    FunCall       aller à l'état 54
-    FunName       aller à l'état 30
-    RightOperand  aller à l'état 55
-    Operations    aller à l'état 56
-    Bool          aller à l'état 85
-    Comparaison   aller à l'état 58
-
-
-État 79
-
-    5 FunCall: FunName tPO CallArgs tPF .
-
-    $défaut  réduction par utilisation de la règle 5 (FunCall)
-
-
-État 80
-
-   12 CallArgNext: tVIRG . CallArgs
-
-    tMAIN  décalage et aller à l'état 10
-    tNB    décalage et aller à l'état 52
-    tID    décalage et aller à l'état 62
-
-    $défaut  réduction par utilisation de la règle 11 (CallArgs)
-
-    FunCall       aller à l'état 54
-    CallArgs      aller à l'état 86
-    FunName       aller à l'état 30
-    RightOperand  aller à l'état 65
-    Operations    aller à l'état 56
-
-
-État 81
-
-   10 CallArgs: RightOperand CallArgNext .
-
-    $défaut  réduction par utilisation de la règle 10 (CallArgs)
-
-
-État 82
-
-   28 Ligne: Condition tAO Body tAF .
-
-    $défaut  réduction par utilisation de la règle 28 (Ligne)
-
-
-État 83
-
-   38 Operations: RightOperand . Operateur RightOperand
-   38           | RightOperand Operateur RightOperand .
-
-    tSOUS  décalage et aller à l'état 67
-    tADD   décalage et aller à l'état 68
-    tDIV   décalage et aller à l'état 69
-    tMUL   décalage et aller à l'état 70
-
-    tSOUS     [réduction par utilisation de la règle 38 (Operations)]
-    tADD      [réduction par utilisation de la règle 38 (Operations)]
-    tDIV      [réduction par utilisation de la règle 38 (Operations)]
-    tMUL      [réduction par utilisation de la règle 38 (Operations)]
-    $défaut  réduction par utilisation de la règle 38 (Operations)
-
-    Operateur  aller à l'état 75
-
-
-État 84
-
-   38 Operations: RightOperand . Operateur RightOperand
-   53 Comparaison: RightOperand Comparateur RightOperand .
-
-    tSOUS  décalage et aller à l'état 67
-    tADD   décalage et aller à l'état 68
-    tDIV   décalage et aller à l'état 69
-    tMUL   décalage et aller à l'état 70
-
-    $défaut  réduction par utilisation de la règle 53 (Comparaison)
-
-    Operateur  aller à l'état 75
-
-
-État 85
-
-   44 ForCondition: tPO DeclarationIndice tPVIRG Bool . tPVIRG Affectation tPF
-
-    tPVIRG  décalage et aller à l'état 87
-
-
-État 86
-
-   12 CallArgNext: tVIRG CallArgs .
-
-    $défaut  réduction par utilisation de la règle 12 (CallArgNext)
-
-
-État 87
-
-   44 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG . Affectation tPF
-
-    tID  décalage et aller à l'état 88
-
-    Affectation  aller à l'état 89
-
-
-État 88
-
-   39 Affectation: tID . tEGAL RightOperand
-
-    tEGAL  décalage et aller à l'état 43
-
-
-État 89
-
-   44 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation . tPF
-
-    tPF  décalage et aller à l'état 90
-
-
-État 90
-
-   44 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF .
-
-    $défaut  réduction par utilisation de la règle 44 (ForCondition)
+    $défaut  réduction par utilisation de la règle 20 (CallArgNext)

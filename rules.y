@@ -1,61 +1,68 @@
 %{
 #include <stdlib.h>
 #include <stdio.h>
-int varchar[16];
+int string[16]; //Taille max du nom de variable
 void yyerror(char *s);
 
 %}
 
-%union {int nb; char varchar[16];}
-%token tEGAL tPO tPF tAO tAF tSOUS tADD tDIV tMUL tERR tPRINTF tMAIN tINT tSTR tCONST tVIRG tPVIRG tIF tWHILE tFOR tINF tSUP tINFEG tSUPEG
-%token <nb> tNB
-%token <varchar> tID
-%start Programme
+%union {int nb; char string[16];} //associer une étiquette à chaque entier
+%token 
+tMain tConst tPrint
+tIF tWhile tElse
+tAO tAF tPO tPF tV tPV
+tEqual
+tVoid 
+tInt tString
+tSUB tADD tMUL tDIV
+tINF tSUP
 
-%left tADD tSOUS
-%left tMUL tDIV
+%token <nb> tNB //Etiquette entier
+%token <string> tID //Etiquette nom variable/fonction
+%start Program
+
+%left tADD tSUB //Priorité à gauche
+%left tMUL tDIV //Priorité à gauche
 
 %%
 
-Programme: Funs;
+Program: Functions;
 
-Funs: Fun | Fun Funs;
-Fun: FunType FunName tPO DeclArgs tPF tAO Body tAF;
+Functions: Function | Function Functions;
+DecArgs: Type tID NextDecArg |;
+NextDecArg: tV DecArgs |;
+Function: FunType FunName tPO DecArgs tPF tAO Body tAF;
 FunCall: FunName tPO CallArgs tPF ;
 
-DeclArgs: VarType tID DeclArgNext |;
-DeclArgNext: tVIRG DeclArgs |;
+FunType: tVoid | Type;
+FunName: tMain | tID; 
 
-CallArgs: RightOperand CallArgNext |;
-CallArgNext: tVIRG CallArgs |;
+Type0: tConst |;
+Type: tInt | tString;
 
-PreType: tCONST |;
-Type: tINT | tSTR;
-FunType: Type;
-VarType: PreType Type;
 
-FunName: tMAIN | tID; 
 
-Body: Lignes;
-Lignes: Ligne Lignes |;
-Ligne: FunCall tPVIRG | Declaration tPVIRG | Affectation tPVIRG | Condition tAO Body tAF;
+CallArgs: Operand CallArgNext |;
+CallArgNext: tV CallArgs |;
 
-Declaration : VarType tID ;
+Body: Instructions;
+Instructions: Instruction Instructions |;
+Instruction: FunCall tPV | VarDeclaration tPV | VarAssign tPV | Condition tAO Body tAF;
 
-RightOperand:  FunCall | Operations | tNB | tID;
-Operateur: tSOUS | tADD | tDIV | tMUL;
+VarDeclaration : Type0 Type tID ;
 
-Operations: RightOperand Operateur RightOperand;
-Affectation : tID tEGAL RightOperand;
+Operand:  FunCall | Operations | tNB | tID;
+Operator: tSUB | tADD | tDIV | tMUL;
 
-Condition: tIF ArgCondition | tWHILE ArgCondition | tFOR ForCondition;
-ArgCondition: tPO Bool tPF;
-ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF;
-DeclarationIndice: Affectation | tID;
+Operations: Operand Operator Operand;
+VarAssign : tID tEqual Operand;
 
-Bool: Comparaison | tID;
-Comparateur: tINF | tSUP | tINFEG | tSUPEG;
-Comparaison: RightOperand Comparateur RightOperand;
+Condition: tIF ArgCondition | tWhile ArgCondition;
+ArgCondition: tPO BoolExpression tPF;
+
+BoolExpression: Comparaison | tID;
+Comparator: tINF | tSUP;
+Comparaison: Operand Comparator Operand;
 
 %%
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }

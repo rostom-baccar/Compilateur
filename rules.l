@@ -8,48 +8,35 @@
 
 %%
 
-[ \t\n]+  {};
-","  {return tVIRG;}
-[0-9]+(e[0-9]+)? {
-	  yylval.nb = (int) strtold(yytext, NULL);
-	  return tNB;
-	}
-"const" {return tCONST;}
-"int"   {return tINT;}
-"string" {return tSTR;}
-"main"  {return tMAIN;}
-"printf" {return tPRINTF;}
+[ \t\n]+  {}; //les espaces et les tabs sont ignorés
+	
+"main"  {return tMain;}	
+"int"   {return tInt;}
+"const" {return tConst;}
+"printf" {return tPrint;}
 "if"    {return tIF;}
-"while"    {return tWHILE;}
-"for"    {return tFOR;}
+"while"    {return tWhile;}
+"else"    {return tElse;}
+"void" {return tVoid;}
+"string" {return tString;}
+
 "{"     {return tAO;}
 "}"     {return tAF;}
 "("     {return tPO;}
 ")"     {return tPF;}
-";" {return tPVIRG;}
-"="	{return tEGAL;}
-"-"	{return tSOUS;}
+"," {return tV;}
+";" {return tPV;}
+"="	{return tEqual;}
+"-"	{return tSUB;}
 "+"	{return tADD;}
 "*"	{return tMUL;}
 "/"	{return tDIV;}
 "<"	{return tINF;}
 ">"	{return tSUP;}
-"<="	{return tINFEG;}
-">="	{return tSUPEG;}
-[a-zA-Z]+[a-zA-Z0-9|_]* {
-	  strcpy(yylval.varchar, yytext);
-	  return tID;
-	}
 
-. {return tERR;}
+[A-ZA-Z]+[A-Za-z0-9|_]* {strcpy(yylval.string, yytext);return tID;}
+[0-9]+(e[0-9]+)? {yylval.nb = (int) strtold(yytext, NULL);return tNB;}
+
 
 %%
-/*
-int main()
-{   
-    // The function that starts the analysis
-    yylex();
-  
-    return 0;
-}
-*/
+
