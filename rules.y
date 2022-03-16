@@ -26,7 +26,7 @@ FunCall: FunName tPO CallArgs tPF tPVIRG;
 DeclArgs: VarType tID DeclArgNext |;
 DeclArgNext: tVIRG DeclArgs |;
 
-CallArgs: tID DeclArgNext |;
+CallArgs: RightOperand DeclArgNext |;
 CallArgNext: tVIRG DeclArgs |;
 
 PreType: tCONST |;
@@ -36,9 +36,15 @@ VarType: PreType Type;
 
 FunName: tMAIN | tID; 
 
-Body: Lignes |;
-Lignes: Ligne | Ligne Lignes;
-Ligne: FunCall | VarType tID tPVIRG |;
+Body: | Lignes;
+Lignes: Ligne tVIRG Lignes;
+Ligne: FunCall | VarType tID | Operations;
+
+RightOperand: tNB | tID | Operations | FunCall | Affectations;
+Operateur: tSOUS | tADD | tDIV | tMUL;
+
+Operations: RightOperand Operateur RightOperand;
+Affectations: tID tEGAL RightOperand;
 
 %%
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }

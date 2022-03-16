@@ -1,6 +1,7 @@
 int main() {
     
     const int wesh;
-    bonjour(wesh);
+    wesh = 2;
+    bonjour(wesh+4);
     
 }

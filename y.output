@@ -1,6 +1,14 @@
 Non-terminaux inutiles dans la grammaire
 
+    FunCall
+    CallArgs
     CallArgNext
+    Lignes
+    Ligne
+    RightOperand
+    Operateur
+    Operations
+    Affectations
 
 
 Terminaux inutilisés dans la grammaire
@@ -12,21 +20,42 @@ Terminaux inutilisés dans la grammaire
     tMUL
     tERR
     tPRINTF
+    tPVIRG
     tNB
 
 
 Règles inutiles dans la grammaire
 
-   24 CallArgNext: tVIRG DeclArgs
-   25            | %empty
+   18 FunCall: FunName tPO CallArgs tPF tPVIRG
 
+   19 CallArgs: RightOperand DeclArgNext
+   20         | %empty
 
-Règles inutiles dans l'analyseur à cause de conflits
+   21 CallArgNext: tVIRG DeclArgs
+   22            | %empty
 
-   22 Body: Body
+   23 Body: Lignes
 
+   24 Lignes: Ligne tVIRG Lignes
 
-État 27 conflits: 1 décalage/réduction
+   25 Ligne: FunCall
+   26      | VarType tID
+   27      | Operations
+
+   28 RightOperand: tNB
+   29             | tID
+   30             | Operations
+   31             | FunCall
+   32             | Affectations
+
+   33 Operateur: tSOUS
+   34          | tADD
+   35          | tDIV
+   36          | tMUL
+
+   37 Operations: RightOperand Operateur RightOperand
+
+   38 Affectations: tID tEGAL RightOperand
 
 
 Grammaire
@@ -40,34 +69,26 @@ Grammaire
 
     4 Fun: FunType FunName tPO DeclArgs tPF tAO Body tAF
 
-    5 FunCall: FunName tPO CallArgs tPF tPVIRG
+    5 DeclArgs: VarType tID DeclArgNext
+    6         | %empty
 
-    6 DeclArgs: VarType tID DeclArgNext
-    7         | %empty
+    7 DeclArgNext: tVIRG DeclArgs
+    8            | %empty
 
-    8 DeclArgNext: tVIRG DeclArgs
-    9            | %empty
+    9 PreType: tCONST
+   10        | %empty
 
-   10 CallArgs: tID DeclArgNext
-   11         | %empty
+   11 Type: tINT
+   12     | tSTR
 
-   12 PreType: tCONST
-   13        | %empty
+   13 FunType: Type
 
-   14 Type: tINT
-   15     | tSTR
+   14 VarType: PreType Type
 
-   16 FunType: Type
+   15 FunName: tMAIN
+   16        | tID
 
-   17 VarType: PreType Type
-
-   18 FunName: tMAIN
-   19        | tID
-
-   20 Body: FunCall
-   21     | VarType tID tPVIRG
-   22     | Body
-   23     | %empty
+   17 Body: %empty
 
 
 Terminaux, suivis des règles où ils apparaissent
@@ -75,8 +96,8 @@ Terminaux, suivis des règles où ils apparaissent
     $end (0) 0
     error (256)
     tEGAL (258)
-    tPO (259) 4 5
-    tPF (260) 4 5
+    tPO (259) 4
+    tPF (260) 4
     tAO (261) 4
     tAF (262) 4
     tSOUS (263)
@@ -85,14 +106,14 @@ Terminaux, suivis des règles où ils apparaissent
     tMUL (266)
     tERR (267)
     tPRINTF (268)
-    tMAIN (269) 18
-    tINT (270) 14
-    tSTR (271) 15
-    tCONST (272) 12
-    tVIRG (273) 8
-    tPVIRG (274) 5 21
+    tMAIN (269) 15
+    tINT (270) 11
+    tSTR (271) 12
+    tCONST (272) 9
+    tVIRG (273) 7
+    tPVIRG (274)
     tNB <nb> (275)
-    tID <varchar> (276) 6 10 19 21
+    tID <varchar> (276) 5 16
 
 
 Non-terminaux, suivis des règles où ils apparaissent
@@ -108,36 +129,30 @@ Non-terminaux, suivis des règles où ils apparaissent
     Fun (25)
         à gauche: 4
         à droite: 2 3
-    FunCall (26)
-        à gauche: 5
-        à droite: 20
-    DeclArgs (27)
-        à gauche: 6 7
-        à droite: 4 8
-    DeclArgNext (28)
-        à gauche: 8 9
-        à droite: 6 10
-    CallArgs (29)
-        à gauche: 10 11
+    DeclArgs (26)
+        à gauche: 5 6
+        à droite: 4 7
+    DeclArgNext (27)
+        à gauche: 7 8
         à droite: 5
-    PreType (30)
-        à gauche: 12 13
-        à droite: 17
-    Type (31)
-        à gauche: 14 15
-        à droite: 16 17
-    FunType (32)
-        à gauche: 16
+    PreType (28)
+        à gauche: 9 10
+        à droite: 14
+    Type (29)
+        à gauche: 11 12
+        à droite: 13 14
+    FunType (30)
+        à gauche: 13
         à droite: 4
-    VarType (33)
+    VarType (31)
+        à gauche: 14
+        à droite: 5
+    FunName (32)
+        à gauche: 15 16
+        à droite: 4
+    Body (33)
         à gauche: 17
-        à droite: 6 21
-    FunName (34)
-        à gauche: 18 19
-        à droite: 4 5
-    Body (35)
-        à gauche: 20 21 22 23
-        à droite: 4 22
+        à droite: 4
 
 
 État 0
@@ -156,16 +171,16 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 1
 
-   14 Type: tINT .
+   11 Type: tINT .
 
-    $défaut  réduction par utilisation de la règle 14 (Type)
+    $défaut  réduction par utilisation de la règle 11 (Type)
 
 
 État 2
 
-   15 Type: tSTR .
+   12 Type: tSTR .
 
-    $défaut  réduction par utilisation de la règle 15 (Type)
+    $défaut  réduction par utilisation de la règle 12 (Type)
 
 
 État 3
@@ -200,9 +215,9 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 6
 
-   16 FunType: Type .
+   13 FunType: Type .
 
-    $défaut  réduction par utilisation de la règle 16 (FunType)
+    $défaut  réduction par utilisation de la règle 13 (FunType)
 
 
 État 7
@@ -231,16 +246,16 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 10
 
-   18 FunName: tMAIN .
+   15 FunName: tMAIN .
 
-    $défaut  réduction par utilisation de la règle 18 (FunName)
+    $défaut  réduction par utilisation de la règle 15 (FunName)
 
 
 État 11
 
-   19 FunName: tID .
+   16 FunName: tID .
 
-    $défaut  réduction par utilisation de la règle 19 (FunName)
+    $défaut  réduction par utilisation de la règle 16 (FunName)
 
 
 État 12
@@ -256,8 +271,8 @@ Non-terminaux, suivis des règles où ils apparaissent
 
     tCONST  décalage et aller à l'état 14
 
-    tPF       réduction par utilisation de la règle 7 (DeclArgs)
-    $défaut  réduction par utilisation de la règle 13 (PreType)
+    tPF       réduction par utilisation de la règle 6 (DeclArgs)
+    $défaut  réduction par utilisation de la règle 10 (PreType)
 
     DeclArgs  aller à l'état 15
     PreType   aller à l'état 16
@@ -266,9 +281,9 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 14
 
-   12 PreType: tCONST .
+    9 PreType: tCONST .
 
-    $défaut  réduction par utilisation de la règle 12 (PreType)
+    $défaut  réduction par utilisation de la règle 9 (PreType)
 
 
 État 15
@@ -280,7 +295,7 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 16
 
-   17 VarType: PreType . Type
+   14 VarType: PreType . Type
 
     tINT  décalage et aller à l'état 1
     tSTR  décalage et aller à l'état 2
@@ -290,7 +305,7 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 17
 
-    6 DeclArgs: VarType . tID DeclArgNext
+    5 DeclArgs: VarType . tID DeclArgNext
 
     tID  décalage et aller à l'état 20
 
@@ -304,18 +319,18 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 19
 
-   17 VarType: PreType Type .
+   14 VarType: PreType Type .
 
-    $défaut  réduction par utilisation de la règle 17 (VarType)
+    $défaut  réduction par utilisation de la règle 14 (VarType)
 
 
 État 20
 
-    6 DeclArgs: VarType tID . DeclArgNext
+    5 DeclArgs: VarType tID . DeclArgNext
 
     tVIRG  décalage et aller à l'état 22
 
-    $défaut  réduction par utilisation de la règle 9 (DeclArgNext)
+    $défaut  réduction par utilisation de la règle 8 (DeclArgNext)
 
     DeclArgNext  aller à l'état 23
 
@@ -324,145 +339,48 @@ Non-terminaux, suivis des règles où ils apparaissent
 
     4 Fun: FunType FunName tPO DeclArgs tPF tAO . Body tAF
 
-    tMAIN   décalage et aller à l'état 10
-    tCONST  décalage et aller à l'état 14
-    tID     décalage et aller à l'état 11
+    $défaut  réduction par utilisation de la règle 17 (Body)
 
-    tAF       réduction par utilisation de la règle 23 (Body)
-    $défaut  réduction par utilisation de la règle 13 (PreType)
-
-    FunCall  aller à l'état 24
-    PreType  aller à l'état 16
-    VarType  aller à l'état 25
-    FunName  aller à l'état 26
-    Body     aller à l'état 27
+    Body  aller à l'état 24
 
 
 État 22
 
-    8 DeclArgNext: tVIRG . DeclArgs
+    7 DeclArgNext: tVIRG . DeclArgs
 
     tCONST  décalage et aller à l'état 14
 
-    tPF       réduction par utilisation de la règle 7 (DeclArgs)
-    $défaut  réduction par utilisation de la règle 13 (PreType)
+    tPF       réduction par utilisation de la règle 6 (DeclArgs)
+    $défaut  réduction par utilisation de la règle 10 (PreType)
 
-    DeclArgs  aller à l'état 28
+    DeclArgs  aller à l'état 25
     PreType   aller à l'état 16
     VarType   aller à l'état 17
 
 
 État 23
 
-    6 DeclArgs: VarType tID DeclArgNext .
+    5 DeclArgs: VarType tID DeclArgNext .
 
-    $défaut  réduction par utilisation de la règle 6 (DeclArgs)
+    $défaut  réduction par utilisation de la règle 5 (DeclArgs)
 
 
 État 24
 
-   20 Body: FunCall .
+    4 Fun: FunType FunName tPO DeclArgs tPF tAO Body . tAF
 
-    $défaut  réduction par utilisation de la règle 20 (Body)
+    tAF  décalage et aller à l'état 26
 
 
 État 25
 
-   21 Body: VarType . tID tPVIRG
+    7 DeclArgNext: tVIRG DeclArgs .
 
-    tID  décalage et aller à l'état 29
+    $défaut  réduction par utilisation de la règle 7 (DeclArgNext)
 
 
 État 26
 
-    5 FunCall: FunName . tPO CallArgs tPF tPVIRG
-
-    tPO  décalage et aller à l'état 30
-
-
-État 27
-
-    4 Fun: FunType FunName tPO DeclArgs tPF tAO Body . tAF
-   22 Body: Body .
-
-    tAF  décalage et aller à l'état 31
-
-    tAF  [réduction par utilisation de la règle 22 (Body)]
-
-
-État 28
-
-    8 DeclArgNext: tVIRG DeclArgs .
-
-    $défaut  réduction par utilisation de la règle 8 (DeclArgNext)
-
-
-État 29
-
-   21 Body: VarType tID . tPVIRG
-
-    tPVIRG  décalage et aller à l'état 32
-
-
-État 30
-
-    5 FunCall: FunName tPO . CallArgs tPF tPVIRG
-
-    tID  décalage et aller à l'état 33
-
-    $défaut  réduction par utilisation de la règle 11 (CallArgs)
-
-    CallArgs  aller à l'état 34
-
-
-État 31
-
     4 Fun: FunType FunName tPO DeclArgs tPF tAO Body tAF .
 
     $défaut  réduction par utilisation de la règle 4 (Fun)
-
-
-État 32
-
-   21 Body: VarType tID tPVIRG .
-
-    $défaut  réduction par utilisation de la règle 21 (Body)
-
-
-État 33
-
-   10 CallArgs: tID . DeclArgNext
-
-    tVIRG  décalage et aller à l'état 22
-
-    $défaut  réduction par utilisation de la règle 9 (DeclArgNext)
-
-    DeclArgNext  aller à l'état 35
-
-
-État 34
-
-    5 FunCall: FunName tPO CallArgs . tPF tPVIRG
-
-    tPF  décalage et aller à l'état 36
-
-
-État 35
-
-   10 CallArgs: tID DeclArgNext .
-
-    $défaut  réduction par utilisation de la règle 10 (CallArgs)
-
-
-État 36
-
-    5 FunCall: FunName tPO CallArgs tPF . tPVIRG
-
-    tPVIRG  décalage et aller à l'état 37
-
-
-État 37
-
-    5 FunCall: FunName tPO CallArgs tPF tPVIRG .
-
-    $défaut  réduction par utilisation de la règle 5 (FunCall)
