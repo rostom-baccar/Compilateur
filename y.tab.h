@@ -66,8 +66,15 @@ extern int yydebug;
     tCONST = 272,
     tVIRG = 273,
     tPVIRG = 274,
-    tNB = 275,
-    tID = 276
+    tIF = 275,
+    tWHILE = 276,
+    tFOR = 277,
+    tINF = 278,
+    tSUP = 279,
+    tINFEG = 280,
+    tSUPEG = 281,
+    tNB = 282,
+    tID = 283
   };
 #endif
 /* Tokens.  */
@@ -88,8 +95,15 @@ extern int yydebug;
 #define tCONST 272
 #define tVIRG 273
 #define tPVIRG 274
-#define tNB 275
-#define tID 276
+#define tIF 275
+#define tWHILE 276
+#define tFOR 277
+#define tINF 278
+#define tSUP 279
+#define tINFEG 280
+#define tSUPEG 281
+#define tNB 282
+#define tID 283
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -98,7 +112,7 @@ union YYSTYPE
 #line 9 "rules.y"
 int nb; char varchar[16];
 
-#line 102 "y.tab.h"
+#line 116 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

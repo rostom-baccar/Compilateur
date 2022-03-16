@@ -19,6 +19,9 @@
 "string" {return tSTR;}
 "main"  {return tMAIN;}
 "printf" {return tPRINTF;}
+"if"    {return tIF;}
+"while"    {return tWHILE;}
+"for"    {return tFOR;}
 "{"     {return tAO;}
 "}"     {return tAF;}
 "("     {return tPO;}
@@ -29,6 +32,10 @@
 "+"	{return tADD;}
 "*"	{return tMUL;}
 "/"	{return tDIV;}
+"<"	{return tINF;}
+">"	{return tSUP;}
+"<="	{return tINFEG;}
+">="	{return tSUPEG;}
 [a-zA-Z]+[a-zA-Z0-9|_]* {
 	  strcpy(yylval.varchar, yytext);
 	  return tID;
