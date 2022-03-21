@@ -1,36 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "symboles.h"
 
 int taille = 0;
 int profondeurMAX = 0;
 
-int main() {
-    symbole* tab;
-    tab = init();
-    int a = 2;
-    int b;
-        
-    
-    symbole s1 = {nomVariable:"a", typeVariable:"int", declare:0, profondeur:1};
-    ajouter_symbole(tab, s1);
-    
-    symbole s2 = {nomVariable:"b", typeVariable:"char", declare:1, profondeur:0};
-    ajouter_symbole(tab, s2);
-    
-    print_table(tab);
-    supprimer_symbole(tab);
-    print_table(tab);
-    
-    return 0;
-}
-
-symbole* init() {
+symbole* init_ts() {
     return malloc(TAILLE*sizeof(symbole*));
 }
 
 
-void print_table(symbole* tab) {
+void print_ts(symbole* tab) {
     int i = 0;
     for (i; i < taille; i++) {
         print_symbole(tab[i]);
@@ -42,9 +23,11 @@ void print_symbole(symbole s) {
     printf("%s (%s, %d, %d) ", s.nomVariable, s.typeVariable, s.declare, s.profondeur);
 }
 
-void ajouter_symbole(symbole* tab, symbole s) {
+void ajouter_symbole(symbole* tab, char* nom, char* type, int decl, int prof) {
     if (taille >= TAILLE) printf("TAILLE MAXIMALE DEPASSEE\n");
-    if (s.profondeur >= profondeurMAX) {profondeurMAX++;}
+    symbole s = {declare:0, profondeur:prof};
+    strcpy(s.nomVariable, nom);
+    strcpy(s.typeVariable, type);
     tab[taille] = s;
     taille++;
 }
@@ -61,6 +44,18 @@ void supprimer_symbole(symbole * tab) {
     taille -= nb;
 }
 
+symbole depiler(symbole *tab) {
+    symbole retour = tab[taille];
+    taille--;
+    return retour;
+}
+
+symbole ajouter_tmp(symbole* tab, int profondeur) {
+
+    ajouter_symbole(tab, "tmp", "tmp", profondeur, 0);
+    taille++;
+    return tab[taille];
+}
 
 int get_addr(symbole* tab, char* nom) {
     int i = 0;
