@@ -1,20 +1,7 @@
-Non-terminaux inutiles dans la grammaire
-
-    Operateur
-
-
 Terminaux inutilisés dans la grammaire
 
     tERR
     tPRINTF
-
-
-Règles inutiles dans la grammaire
-
-   54 Operateur: tSOUS
-   55          | tADD
-   56          | tDIV
-   57          | tMUL
 
 
 Grammaire

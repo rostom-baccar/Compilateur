@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "y.tab.h"
-#include "symboles.c"
 %}
 
 %option noyywrap
+%option nounput
+%option noinput
 
 %%
 

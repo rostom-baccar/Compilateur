@@ -3,9 +3,7 @@
 #include <string.h>
 #include "instructions.h"
 
-int taille = 0;
-int profondeurMAX = 0;
-
+/*
 int main() {
     instruction* tab;
     tab = init();
@@ -17,6 +15,7 @@ int main() {
     
     return 0;
 }
+*/
 
 instruction* init_ti() {
     return malloc(TAILLE*sizeof(instruction*));
@@ -24,8 +23,8 @@ instruction* init_ti() {
 
 
 void print_ti(instruction* tab) {
-    int i = 0;
-    for (i; i < taille; i++) {
+    int i;
+    for (i=0; i < taille; i++) {
         print_instruction(tab[i]);
         printf("\n");
     }

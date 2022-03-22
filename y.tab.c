@@ -74,9 +74,11 @@
 #include "instructions.c"
 int varchar[16];
 void yyerror(char *s);
+int yylex(); //fix warning
+symbole * ts;
+instruction * ti;
 
-
-#line 80 "y.tab.c"
+#line 82 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -184,10 +186,10 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 11 "rules.y"
+#line 13 "rules.y"
 int nb; char varchar[16];
 
-#line 191 "y.tab.c"
+#line 193 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -565,12 +567,12 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    25,    25,    27,    27,    28,    29,    31,    31,    32,
-      32,    34,    34,    35,    35,    37,    37,    38,    38,    39,
-      40,    42,    42,    44,    45,    45,    46,    47,    48,    49,
-      49,    51,    55,    56,    57,    62,    70,    77,    84,    91,
-      99,   104,   104,   104,   105,   106,   107,   107,   109,   109,
-     110,   110,   110,   110,   111
+       0,    27,    27,    29,    29,    30,    31,    33,    33,    34,
+      34,    36,    36,    37,    37,    39,    39,    40,    40,    41,
+      42,    44,    44,    46,    47,    47,    48,    49,    50,    51,
+      51,    53,    59,    60,    61,    66,    72,    79,    86,    93,
+     101,   106,   106,   106,   107,   108,   109,   109,   111,   111,
+     112,   112,   112,   112,   113
 };
 #endif
 
@@ -1423,139 +1425,141 @@ yyreduce:
   switch (yyn)
     {
   case 15:
-#line 37 "rules.y"
+#line 39 "rules.y"
                 { (yyval.nb) = 1; }
-#line 1429 "y.tab.c"
+#line 1431 "y.tab.c"
     break;
 
   case 16:
-#line 37 "rules.y"
+#line 39 "rules.y"
                               { (yyval.nb) = 0; }
-#line 1435 "y.tab.c"
+#line 1437 "y.tab.c"
     break;
 
   case 17:
-#line 38 "rules.y"
+#line 40 "rules.y"
            { (yyval.nb) = 10; }
-#line 1441 "y.tab.c"
+#line 1443 "y.tab.c"
     break;
 
   case 18:
-#line 38 "rules.y"
+#line 40 "rules.y"
                                { (yyval.nb) = 20; }
-#line 1447 "y.tab.c"
+#line 1449 "y.tab.c"
     break;
 
   case 20:
-#line 40 "rules.y"
+#line 42 "rules.y"
                       { (yyval.nb) = (yyvsp[-1].nb) + (yyvsp[0].nb); }
-#line 1453 "y.tab.c"
+#line 1455 "y.tab.c"
     break;
 
   case 29:
-#line 49 "rules.y"
+#line 51 "rules.y"
                      {profondeurMAX++;}
-#line 1459 "y.tab.c"
+#line 1461 "y.tab.c"
     break;
 
   case 30:
-#line 49 "rules.y"
+#line 51 "rules.y"
                                                  {supprimer_symbole(ts);profondeurMAX--;}
-#line 1465 "y.tab.c"
+#line 1467 "y.tab.c"
     break;
 
   case 31:
-#line 51 "rules.y"
+#line 53 "rules.y"
                          {
-  ajouter_symbole(ts, (yyvsp[0].varchar), (yyvsp[-1].nb), 1, profondeurMAX);
+  char vartype[5];
+  sprintf(vartype, "%d", (yyvsp[-1].nb));
+  ajouter_symbole(ts, (yyvsp[0].varchar), vartype, 1, profondeurMAX);
 }
-#line 1473 "y.tab.c"
+#line 1477 "y.tab.c"
     break;
 
   case 34:
-#line 57 "rules.y"
+#line 61 "rules.y"
                   {
-    symbole s = ajouter_tmp(ti, profondeurMAX);
-    ajouter_instruction(ti, "AFC", get_addr(ts, s), (yyvsp[0].nb), NULL);
+    symbole s = ajouter_tmp(ts, profondeurMAX);
+    ajouter_instruction(ti, "AFC", get_addr(ts, s.nomVariable), (yyvsp[0].nb), -1);
 
 }
-#line 1483 "y.tab.c"
+#line 1487 "y.tab.c"
     break;
 
   case 35:
-#line 62 "rules.y"
+#line 66 "rules.y"
                   {
-    symbole s = ajouter_tmp(ti, profondeurMAX);
-    ajouter_instruction(ti, "AFC", get_addr(ts, s), get_addr(ts, (yyvsp[0].varchar)), NULL);
+    symbole s = ajouter_tmp(ts, profondeurMAX);
+    ajouter_instruction(ti, "AFC", get_addr(ts, s.nomVariable), get_addr(ts, (yyvsp[0].varchar)), -1);
 }
-#line 1492 "y.tab.c"
+#line 1496 "y.tab.c"
     break;
 
   case 36:
-#line 70 "rules.y"
+#line 72 "rules.y"
                                             {
-    instruction arg3 = get_addr(ts, depiler(ts));
-    instruction arg2 = get_addr(ts, depiler(ts));
-    instruction arg1 = get_addr(ajouter_tmp(ts, profondeurMAX));
+    int arg3 = get_addr(ts, depiler(ts).nomVariable);
+    int arg2 = get_addr(ts, depiler(ts).nomVariable);
+    int arg1 = get_addr(ts, ajouter_tmp(ts, profondeurMAX).nomVariable);
     ajouter_instruction(ti, "SUB", arg1, arg2, arg3);
 
 }
-#line 1504 "y.tab.c"
+#line 1508 "y.tab.c"
     break;
 
   case 37:
-#line 77 "rules.y"
+#line 79 "rules.y"
                                            {
-    instruction arg3 = get_addr(ts, depiler(ts));
-    instruction arg2 = get_addr(ts, depiler(ts));
-    instruction arg1 = get_addr(ajouter_tmp(ts, profondeurMAX));
+    int arg3 = get_addr(ts, depiler(ts).nomVariable);
+    int arg2 = get_addr(ts, depiler(ts).nomVariable);
+    int arg1 = get_addr(ts, ajouter_tmp(ts, profondeurMAX).nomVariable);
     ajouter_instruction(ti, "ADD", arg1, arg2, arg3);
 
 }
-#line 1516 "y.tab.c"
+#line 1520 "y.tab.c"
     break;
 
   case 38:
-#line 84 "rules.y"
+#line 86 "rules.y"
                                            {
-    instruction arg3 = get_addr(ts, depiler(ts).nomVariable);
-    instruction arg2 = get_addr(ts, depiler(ts).nomVariable);
-    instruction arg1 = get_addr(ajouter_tmp(ts, profondeurMAX));
+    int arg3 = get_addr(ts, depiler(ts).nomVariable);
+    int arg2 = get_addr(ts, depiler(ts).nomVariable);
+    int arg1 = get_addr(ts, ajouter_tmp(ts, profondeurMAX).nomVariable);
     ajouter_instruction(ti, "DIV", arg1, arg2, arg3);
 
 }
-#line 1528 "y.tab.c"
+#line 1532 "y.tab.c"
     break;
 
   case 39:
-#line 91 "rules.y"
+#line 93 "rules.y"
                                            {
-    instruction arg3 = get_addr(ts, depiler(ts));
-    instruction arg2 = get_addr(ts, depiler(ts));
-    instruction arg1 = get_addr(ajouter_tmp(ts, profondeurMAX));
+    int arg3 = get_addr(ts, depiler(ts).nomVariable);
+    int arg2 = get_addr(ts, depiler(ts).nomVariable);
+    int arg1 = get_addr(ts, ajouter_tmp(ts, profondeurMAX).nomVariable);
     ajouter_instruction(ti, "MUL", arg1, arg2, arg3);
 
 }
-#line 1540 "y.tab.c"
+#line 1544 "y.tab.c"
     break;
 
   case 40:
-#line 99 "rules.y"
+#line 101 "rules.y"
                                      {
     symbole s = depiler(ts);
-    ajouter_instruction(ti, "COP", get_addr(ts, (yyvsp[-2].varchar)), get_addr(ts, s.nomVariable), NULL);
+    ajouter_instruction(ti, "COP", get_addr(ts, (yyvsp[-2].varchar)), get_addr(ts, s.nomVariable), -1);
 }
-#line 1549 "y.tab.c"
+#line 1553 "y.tab.c"
     break;
 
   case 43:
-#line 104 "rules.y"
+#line 106 "rules.y"
                                                                       {profondeurMAX++;}
-#line 1555 "y.tab.c"
+#line 1559 "y.tab.c"
     break;
 
 
-#line 1559 "y.tab.c"
+#line 1563 "y.tab.c"
 
       default: break;
     }
@@ -1787,7 +1791,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 113 "rules.y"
+#line 115 "rules.y"
 
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
 int main(void) {

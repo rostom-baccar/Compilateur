@@ -12,8 +12,8 @@ symbole* init_ts() {
 
 
 void print_ts(symbole* tab) {
-    int i = 0;
-    for (i; i < taille; i++) {
+    int i;
+    for (i=0; i < taille; i++) {
         print_symbole(tab[i]);
         printf("\n");
     }
@@ -33,9 +33,9 @@ void ajouter_symbole(symbole* tab, char* nom, char* type, int decl, int prof) {
 }
 
 void supprimer_symbole(symbole * tab) {
-    int i = 0;
+    int i;
     int nb = 0;
-    for (i; i < taille; i++) {
+    for (i=0; i < taille; i++) {
         symbole s = tab[i];
         if (s.profondeur == profondeurMAX) {
             nb++;
@@ -58,12 +58,13 @@ symbole ajouter_tmp(symbole* tab, int profondeur) {
 }
 
 int get_addr(symbole* tab, char* nom) {
-    int i = 0;
-    for (i; i < taille; i++) {
+    int i;
+    for (i=0; i < taille; i++) {
         if (tab[i].nomVariable == nom) {
             return i;
         }
     }
+    return -1;
 }
 
 
