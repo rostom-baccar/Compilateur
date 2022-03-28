@@ -11,7 +11,7 @@ instruction * ti;
 %}
 
 %union {int nb; char varchar[16];}
-%token tEGAL tPO tPF tAO tAF tSOUS tADD tDIV tMUL tERR tPRINTF tMAIN tINT tSTR tCONST tVIRG tPVIRG tIF tWHILE tFOR tINF tSUP tINFEG tSUPEG
+%token tEGAL tPO tPF tAO tAF tSOUS tADD tDIV tMUL tERR tPRINTF tMAIN tINT tSTR tCONST tVIRG tPVIRG tIF tWHILE tFOR tINF tSUP tINFEG tSUPEG tEGALEGAL
 %token <nb> tNB
 %token <varchar> tID
 %type <nb> VarType
@@ -71,7 +71,7 @@ Operations: RightOperand tSOUS RightOperand {
     int arg3 = depiler_addr(ts);
     int arg2 = depiler_addr(ts);
     int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
-    ajouter_instruction(ti, "SUB", arg1, arg2, arg3);
+    ajouter_instruction(ti, "SOU", arg1, arg2, arg3);
 
 };
 Operations: RightOperand tADD RightOperand {
@@ -106,8 +106,34 @@ ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF;
 DeclarationIndice: Affectation | tID;
 
 Bool: Comparaison | tID;
-Comparateur: tINF | tSUP | tINFEG | tSUPEG;
-Comparaison: RightOperand Comparateur RightOperand;
+
+Comparaison: RightOperand tINF RightOperand {
+    int arg2 = get_addr(ts, $1);
+    int arg3 = get_addr(ts, $3);
+    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
+    ajouter_instruction(ti, "INF", arg1, arg2, arg3);
+};
+Comparaison: RightOperand tSUP RightOperand {
+    int arg2 = get_addr(ts, $1);
+    int arg3 = get_addr(ts, $3);
+    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
+    ajouter_instruction(ti, "SUP", arg1, arg2, arg3);
+};
+Comparaison: RightOperand tEGALEGAL RightOperand {
+    int arg2 = get_addr(ts, $1);
+    int arg3 = get_addr(ts, $3);
+    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
+    ajouter_instruction(ti, "EQU", arg1, arg2, arg3);
+    int arg4 = ajouter_symbole(ts, "tmp_if", "tmp_if", 0);
+    // mettre à jour dans le else
+    // Si la condition n'est pas vérifiée, on jump vers le prochain else
+    // L'adresse du prochain else est contenue dans une variable temporaire qui
+    // est la dernière variable tmp_if ajoutée à cette profondeur
+    ajouter_instruction(ti, "JMF", arg1, arg4, 0);
+};
+
+
+// traduire les comparaisons
 
 %%
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }

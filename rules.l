@@ -29,6 +29,7 @@
 "("     {return tPO;}
 ")"     {return tPF;}
 ";" {return tPVIRG;}
+"=="	{return tEGALEGAL;}
 "="	{return tEGAL;}
 "-"	{return tSOUS;}
 "+"	{return tADD;}

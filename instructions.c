@@ -3,19 +3,6 @@
 #include <string.h>
 #include "instructions.h"
 
-/*
-int main() {
-    instruction* tab;
-    tab = init();
-    
-    ajouter_instruction(tab, "MOV", 0, 0, 1);
-    ajouter_instruction(tab, "MOV", 0, 2, 3);
-    
-    print_table(tab);
-    
-    return 0;
-}
-*/
 
 int taille_ti = 0;
 
@@ -43,6 +30,7 @@ void ajouter_instruction(instruction* tab, char* nom, int arg1, int arg2, int ar
     tab[taille_ti] = i;
     taille_ti++;
 }
+
 
 
 
