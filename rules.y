@@ -1,8 +1,8 @@
 %{
 #include <stdlib.h>
 #include <stdio.h>
-#include "symboles.c"
-#include "instructions.c"
+#include "symboles.h"
+#include "instructions.h"
 int varchar[16];
 void yyerror(char *s);
 int yylex(); //fix warning
@@ -48,62 +48,59 @@ Lignes: Ligne Lignes |;
 Ligne: FunCall tPVIRG;
 Ligne: Declaration tPVIRG;
 Ligne: Affectation tPVIRG;
-Ligne: Condition tAO {profondeurMAX++;} Body tAF {supprimer_symbole(ts);profondeurMAX--;};
+Ligne: Condition tAO {inc_depth();} Body tAF {supprimer_symbole(ts);dec_depth();};
 
 Declaration: VarType tID {
   char vartype[5];
   sprintf(vartype, "%d", $1);
-  ajouter_symbole(ts, $2, vartype, 1, profondeurMAX);
+  ajouter_symbole(ts, $2, vartype, 1);
 };
 
 RightOperand: FunCall ;
 RightOperand: Operations;
 RightOperand: tNB {
-    symbole s = ajouter_tmp(ts, profondeurMAX);
-    ajouter_instruction(ti, "AFC", get_addr(ts, s.nomVariable), $1, -1);
+    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), $1, 0);
 
 };
 RightOperand: tID {
-    symbole s = ajouter_tmp(ts, profondeurMAX);
-    ajouter_instruction(ti, "AFC", get_addr(ts, s.nomVariable), get_addr(ts, $1), -1);
+    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1), 0);
 };
 
 
 Operations: RightOperand tSOUS RightOperand {
-    int arg3 = get_addr(ts, depiler(ts).nomVariable);
-    int arg2 = get_addr(ts, depiler(ts).nomVariable);
-    int arg1 = get_addr(ts, ajouter_tmp(ts, profondeurMAX).nomVariable);
+    int arg3 = depiler_addr(ts);
+    int arg2 = depiler_addr(ts);
+    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
     ajouter_instruction(ti, "SUB", arg1, arg2, arg3);
 
 };
 Operations: RightOperand tADD RightOperand {
-    int arg3 = get_addr(ts, depiler(ts).nomVariable);
-    int arg2 = get_addr(ts, depiler(ts).nomVariable);
-    int arg1 = get_addr(ts, ajouter_tmp(ts, profondeurMAX).nomVariable);
+    int arg3 = depiler_addr(ts);
+    int arg2 = depiler_addr(ts);
+    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
     ajouter_instruction(ti, "ADD", arg1, arg2, arg3);
 
 };
 Operations: RightOperand tDIV RightOperand {
-    int arg3 = get_addr(ts, depiler(ts).nomVariable);
-    int arg2 = get_addr(ts, depiler(ts).nomVariable);
-    int arg1 = get_addr(ts, ajouter_tmp(ts, profondeurMAX).nomVariable);
+    int arg3 = depiler_addr(ts);
+    int arg2 = depiler_addr(ts);
+    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
     ajouter_instruction(ti, "DIV", arg1, arg2, arg3);
 
 };
 Operations: RightOperand tMUL RightOperand {
-    int arg3 = get_addr(ts, depiler(ts).nomVariable);
-    int arg2 = get_addr(ts, depiler(ts).nomVariable);
-    int arg1 = get_addr(ts, ajouter_tmp(ts, profondeurMAX).nomVariable);
+    int arg3 = depiler_addr(ts);
+    int arg2 = depiler_addr(ts);
+    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
     ajouter_instruction(ti, "MUL", arg1, arg2, arg3);
 
 };
 
 Affectation : tID tEGAL RightOperand {
-    symbole s = depiler(ts);
-    ajouter_instruction(ti, "COP", get_addr(ts, $1), get_addr(ts, s.nomVariable), -1);
+    ajouter_instruction(ti, "COP", get_addr(ts, $1), depiler_addr(ts), 0);
 };
 
-Condition: tIF ArgCondition | tWHILE ArgCondition | tFOR ForCondition {profondeurMAX++;};
+Condition: tIF ArgCondition | tWHILE ArgCondition | tFOR ForCondition ;
 ArgCondition: tPO Bool tPF;
 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF;
 DeclarationIndice: Affectation | tID;
@@ -120,6 +117,7 @@ int main(void) {
   ts = init_ts();
   ti = init_ti();
   yyparse();
+  print_ts(ts);
   print_ti(ti);
   return 0;
 }

@@ -17,14 +17,16 @@ int main() {
 }
 */
 
+int taille_ti = 0;
+
 instruction* init_ti() {
-    return malloc(TAILLE*sizeof(instruction*));
+    return malloc(TAILLE*sizeof(instruction));
 }
 
 
 void print_ti(instruction* tab) {
     int i;
-    for (i=0; i < taille; i++) {
+    for (i=0; i < taille_ti; i++) {
         print_instruction(tab[i]);
         printf("\n");
     }
@@ -35,11 +37,11 @@ void print_instruction(instruction i) {
 }
 
 void ajouter_instruction(instruction* tab, char* nom, int arg1, int arg2, int arg3) {
-    if (taille >= TAILLE) printf("TAILLE MAXIMALE DEPASSEE\n");
+    if (taille_ti >= TAILLE) printf("TAILLE MAXIMALE DEPASSEE\n");
     instruction i = {arg1:arg1, arg2:arg2, arg3:arg3};
     strcpy(i.nomInstruction, nom);
-    tab[taille] = i;
-    taille++;
+    tab[taille_ti] = i;
+    taille_ti++;
 }
 
 

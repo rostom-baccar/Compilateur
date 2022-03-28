@@ -12,10 +12,11 @@ symbole* init_ts();
 void print_ts(symbole* tab);
 void print_symbole(symbole s);
 
-void ajouter_symbole(symbole* tab, char* nom, char* typ, int declare, int profondeur);
+int ajouter_symbole(symbole* tab, char* nom, char* typ, int declare);
 void supprimer_symbole(symbole* tab);
-symbole depiler(symbole* tab);
 
-symbole ajouter_tmp(symbole* tab, int prof);
 int get_addr(symbole* ts, char* nom);
+int depiler_addr(symbole* tab);
 
+void inc_depth();
+void dec_depth();
