@@ -23,6 +23,10 @@ void print_instruction(instruction i) {
     printf("%s %d, %d, %d", i.nomInstruction, i.arg1, i.arg2, i.arg3);
 }
 
+int get_taille_ti() {
+    return taille_ti;
+}
+
 void ajouter_instruction(instruction* tab, char* nom, int arg1, int arg2, int arg3) {
     if (taille_ti >= TAILLE) printf("TAILLE MAXIMALE DEPASSEE\n");
     instruction i = {arg1:arg1, arg2:arg2, arg3:arg3};
@@ -30,6 +34,8 @@ void ajouter_instruction(instruction* tab, char* nom, int arg1, int arg2, int ar
     tab[taille_ti] = i;
     taille_ti++;
 }
+
+
 
 
 

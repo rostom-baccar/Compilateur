@@ -6,6 +6,7 @@
 int varchar[16];
 void yyerror(char *s);
 int yylex(); //fix warning
+
 symbole * ts;
 instruction * ti;
 %}
@@ -48,7 +49,24 @@ Lignes: Ligne Lignes |;
 Ligne: FunCall tPVIRG;
 Ligne: Declaration tPVIRG;
 Ligne: Affectation tPVIRG;
-Ligne: Condition tAO {inc_depth();} Body tAF {supprimer_symbole(ts);dec_depth();};
+Ligne: Condition tAO {inc_depth();} Body tAF {
+    supprimer_symbole(ts);
+    dec_depth();
+    // On a décrémenté la profondeur et supprimé les variables crées lors du if
+    // Ainsi, le premier symbole tmp correspond au symbole qui contient l'adresse
+    // de l'instruction jump à modifier
+    int jmp_index = depiler_symbole(ts).declare;
+    // on met à jour le jump
+    // on lui assigne la ligne en cours
+    ti[jmp_index].arg2 = get_taille_ti()-1;
+    
+    // --------------- TODO ---------------
+    // Garder la condition ou pas ? Comment gérer le fait de savoir si on est
+    // dans une chaîne de conditions ?
+    // if (machin) {truc;} bonjour(); else {autre_truc;} <--- erreur !
+    depiler_symbole(ts); // on supprime la variable temporaire qui correspond à la condition
+    
+    };
 
 Declaration: VarType tID {
   char vartype[5];
@@ -106,7 +124,7 @@ ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF;
 DeclarationIndice: Affectation | tID;
 
 Bool: Comparaison | tID;
-
+/*
 Comparaison: RightOperand tINF RightOperand {
     int arg2 = get_addr(ts, $1);
     int arg3 = get_addr(ts, $3);
@@ -119,20 +137,49 @@ Comparaison: RightOperand tSUP RightOperand {
     int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
     ajouter_instruction(ti, "SUP", arg1, arg2, arg3);
 };
+*/
+
 Comparaison: RightOperand tEGALEGAL RightOperand {
-    int arg2 = get_addr(ts, $1);
-    int arg3 = get_addr(ts, $3);
-    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
-    ajouter_instruction(ti, "EQU", arg1, arg2, arg3);
-    int arg4 = ajouter_symbole(ts, "tmp_if", "tmp_if", 0);
-    // mettre à jour dans le else
-    // Si la condition n'est pas vérifiée, on jump vers le prochain else
-    // L'adresse du prochain else est contenue dans une variable temporaire qui
-    // est la dernière variable tmp_if ajoutée à cette profondeur
-    ajouter_instruction(ti, "JMF", arg1, arg4, 0);
+    int op1 = depiler_addr(ts);
+    int op2 = depiler_addr(ts);
+    
+    int result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
+    ajouter_instruction(ti, "EQU", result_egal, op1, op2);
+    
+    // taille_ti correspond à l'index du Jump du if dans la table d'instruction
+    // ajouter_symbole incrémente taille_ti et l'indice correspond à taille_ti-1
+    ajouter_symbole(ts, "next", "tmp_if", get_taille_ti());
+    
+    // on stocke l'emplacement dans ti de cette instruction pour pouvoir
+    // modifier l'adresse de ligne de retour -> dans le symbole tmp_if
+    ajouter_instruction(ti, "JMF", result_egal, -1, 0);
+    
 };
 
 
+Comparaison: RightOperand tINFEG RightOperand {
+    int op1 = depiler_addr(ts);
+    int op2 = depiler_addr(ts);
+    // EGAL
+    int result_egal = ajouter_symbole(ts, "tmp", "result_egal", 0);
+    ajouter_instruction(ti, "EQU", result_egal, op1, op2);
+    // INF
+    int result_inf = ajouter_symbole(ts, "tmp", "tmp", 0);
+    ajouter_instruction(ti, "INF", result_inf, op1, op2);
+    // Ils sont dans la pile car temporaire mais on a déjà leur adresse
+    // donc on ignore le retour
+    depiler_addr(ts); // c'est result_egal
+    depiler_addr(ts); // c'est result_inf
+    int result_or = ajouter_symbole(ts, "tmp", "tmp", 0);
+    ajouter_instruction(ti, "OR", result_or, result_egal, result_inf); // le nom c'est OR ou OU ?
+    
+    
+    int next = ajouter_symbole(ts, "next", "tmp_if", 0);
+
+    ajouter_instruction(ti, "JMF", result_or, next, 0);
+};
+
+// pk il reste des tmp à la fin ?
 // traduire les comparaisons
 
 %%

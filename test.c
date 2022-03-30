@@ -5,7 +5,7 @@ int main() {
     bonjour(a+4);
     
     int i;
-    for (i = 0; i < 4; i = i+1) {
-        bonjour();
+    if (i == 1) {
+        i = a+4;
     }
 }

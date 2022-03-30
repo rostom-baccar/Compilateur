@@ -38,13 +38,17 @@ void print_ts(symbole* tab) {
     }
 }
 
+int get_taille_ts() {
+    return taille;
+}
+
 void print_symbole(symbole s) {
     printf("%s (%s, %d, %d) ", s.nomVariable, s.typeVariable, s.declare, s.profondeur);
 }
 
 int ajouter_symbole(symbole* tab, char* nom, char* type, int decl) {
     if (taille >= TAILLE) printf("TAILLE MAXIMALE DEPASSEE\n");
-    symbole s = {declare:0, profondeur:profondeurMAX};
+    symbole s = {declare:decl, profondeur:profondeurMAX};
     strcpy(s.nomVariable, nom);
     strcpy(s.typeVariable, type);
     tab[taille] = s;
@@ -68,6 +72,12 @@ int depiler_addr(symbole* tab) {
     taille--;
     
     return taille + 1;
+}
+
+// nécessaire pour update adresse retour du jump
+symbole depiler_symbole(symbole* tab) {
+    taille--;
+    return tab[taille];
 }
 
 

@@ -73,8 +73,9 @@ extern int yydebug;
     tSUP = 279,
     tINFEG = 280,
     tSUPEG = 281,
-    tNB = 282,
-    tID = 283
+    tEGALEGAL = 282,
+    tNB = 283,
+    tID = 284
   };
 #endif
 /* Tokens.  */
@@ -102,17 +103,18 @@ extern int yydebug;
 #define tSUP 279
 #define tINFEG 280
 #define tSUPEG 281
-#define tNB 282
-#define tID 283
+#define tEGALEGAL 282
+#define tNB 283
+#define tID 284
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "rules.y"
+#line 14 "rules.y"
 int nb; char varchar[16];
 
-#line 116 "y.tab.h"
+#line 118 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
