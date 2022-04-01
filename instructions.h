@@ -10,7 +10,7 @@ typedef struct instruction {
 instruction* init_ti();
 
 void print_ti(instruction* tab);
-void print_instruction(instruction i);
+void print_instruction(instruction i, int indice);
 
 void ajouter_instruction(instruction* tab, char* nom, int arg1, int arg2, int arg3);
 int get_taille_ti();

@@ -1,0 +1,17 @@
+--> while
+
+--> else if
+
+--> Pour les OU et ET logiques, c'est pas 0 qu'il faut mettre mais un AFC avec une variable qui vaut 0
+(pas confondre valeur et adresse)
+
+--> peut pas faire int a = 0; (déclaration ou affectation mais pas les deux)
+
+--> implémenter ou logique pour INFEG et SUPEG
+
+--> recopier le EGALEGAL pour les autres conditions simples
+
+--> ça doit provoquer une erreur :
+if (a) {truc;}
+machin;
+else {bidule;}

@@ -1,6 +1,7 @@
 %{
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "symboles.h"
 #include "instructions.h"
 int varchar[16];
@@ -12,7 +13,7 @@ instruction * ti;
 %}
 
 %union {int nb; char varchar[16];}
-%token tEGAL tPO tPF tAO tAF tSOUS tADD tDIV tMUL tERR tPRINTF tMAIN tINT tSTR tCONST tVIRG tPVIRG tIF tWHILE tFOR tINF tSUP tINFEG tSUPEG tEGALEGAL
+%token tEGAL tPO tPF tAO tAF tSOUS tADD tDIV tMUL tERR tPRINTF tMAIN tINT tSTR tCONST tVIRG tPVIRG tIF tWHILE tFOR tINF tSUP tINFEG tSUPEG tEGALEGAL tELIF tELSE
 %token <nb> tNB
 %token <varchar> tID
 %type <nb> VarType
@@ -56,16 +57,14 @@ Ligne: Condition tAO {inc_depth();} Body tAF {
     // Ainsi, le premier symbole tmp correspond au symbole qui contient l'adresse
     // de l'instruction jump à modifier
     int jmp_index = depiler_symbole(ts).declare;
+    
     // on met à jour le jump
     // on lui assigne la ligne en cours
     ti[jmp_index].arg2 = get_taille_ti()-1;
     
-    // --------------- TODO ---------------
-    // Garder la condition ou pas ? Comment gérer le fait de savoir si on est
-    // dans une chaîne de conditions ?
-    // if (machin) {truc;} bonjour(); else {autre_truc;} <--- erreur !
-    depiler_symbole(ts); // on supprime la variable temporaire qui correspond à la condition
-    
+    // On ne supprimer pas le symbole associé à la condition
+    // il permet de vérifier qu'il n'y a pas de code entre le if et le else
+    // et il permet de retrouver la condition pour les else if et else
     };
 
 Declaration: VarType tID {
@@ -118,12 +117,76 @@ Affectation : tID tEGAL RightOperand {
     ajouter_instruction(ti, "COP", get_addr(ts, $1), depiler_addr(ts), 0);
 };
 
-Condition: tIF ArgCondition | tWHILE ArgCondition | tFOR ForCondition ;
+
+Condition: tWHILE ArgCondition | tFOR ForCondition ;
+
+Condition: tIF ArgCondition {
+
+    int condition = depiler_addr(ts); 
+    // on dépile et remet juste après car besoin ensuite pour les elif/else
+    // contient même adresse donc rien ne s'est passé du point de vue instruction
+    ajouter_symbole(ts, "result_condition", "tmp", 0);
+    
+    // taille_ti correspond à l'index du Jump du if dans la table d'instruction
+    // ajouter_symbole incrémente taille_ti et l'indice correspond à taille_ti-1
+    ajouter_symbole(ts, "tmp_if", "tmp", get_taille_ti());
+    
+    // on stocke l'emplacement dans ti de cette instruction pour pouvoir
+    // modifier l'adresse de ligne de retour -> dans le symbole tmp_if
+    ajouter_instruction(ti, "JMF", condition, -1, 0);
+};
+
+Condition: tELIF ArgCondition {
+
+    // Opération : !cond_if && cond_elif
+    
+    int cond_addr_elif = depiler_addr(ts); // condition du else if
+    int cond_addr = depiler_addr(ts); // condition du if
+    
+    int result_egal = ajouter_symbole(ts, "tmp", "result_egal", 0);
+    ajouter_instruction(ti, "EQU", result_egal, 0, cond_addr);
+    depiler_addr(ts); // on dépile le result_egal 
+    
+    // On a besoin d'un tmp_if pour mettre à jour le pointeur
+    // et on a besoin d'un result condition pour les prochains elif/else
+    // Dès qu'on sort du else if on s'attend à avoir tmp_if donc c'est la dernière tmp à push
+    int result_condition = ajouter_symbole(ts, "result_condition", "tmp", 0);
+    
+    // 1 = true, 0 = false ==>  1x1=true, reste=false comme &&
+    ajouter_instruction(ti, "MUL", result_condition, result_egal, cond_addr_elif);
+    
+    ajouter_symbole(ts, "tmp_if", "tmp", get_taille_ti());
+    
+    // result_condition = !cond_addr_if && cond_addr_elif
+    ajouter_instruction(ti, "JMF", result_condition, -1, 0);
+    
+};
+Condition: tELSE {
+    // on supprime la variable temporaire qui correspond à la condition
+    int cond_addr = depiler_addr(ts);
+    
+    int result_egal = ajouter_symbole(ts, "tmp", "result_egal", 0);
+    
+    // évaluer x == 0
+    // si cond_addr == 0 résultat est 1 (true)
+    // si cond_addr == 1 résultat est 0 (false)
+    // donc resultat contient !cond_addr
+    ajouter_instruction(ti, "EQU", result_egal, 0, cond_addr);
+    depiler_addr(ts); // on dépile le result_egal
+    
+    ajouter_symbole(ts, "tmp_if", "tmp", get_taille_ti());
+    ajouter_instruction(ti, "JMF", result_egal, -1, 0);
+    
+    // on ne créé pas de result_condition car c'est un else
+};
 ArgCondition: tPO Bool tPF;
 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF;
 DeclarationIndice: Affectation | tID;
 
-Bool: Comparaison | tID;
+Bool: Comparaison;
+Bool: tID {
+    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1), 0);
+};
 /*
 Comparaison: RightOperand tINF RightOperand {
     int arg2 = get_addr(ts, $1);
@@ -145,18 +208,9 @@ Comparaison: RightOperand tEGALEGAL RightOperand {
     
     int result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
     ajouter_instruction(ti, "EQU", result_egal, op1, op2);
-    
-    // taille_ti correspond à l'index du Jump du if dans la table d'instruction
-    // ajouter_symbole incrémente taille_ti et l'indice correspond à taille_ti-1
-    ajouter_symbole(ts, "next", "tmp_if", get_taille_ti());
-    
-    // on stocke l'emplacement dans ti de cette instruction pour pouvoir
-    // modifier l'adresse de ligne de retour -> dans le symbole tmp_if
-    ajouter_instruction(ti, "JMF", result_egal, -1, 0);
-    
 };
 
-
+/*
 Comparaison: RightOperand tINFEG RightOperand {
     int op1 = depiler_addr(ts);
     int op2 = depiler_addr(ts);
@@ -171,14 +225,16 @@ Comparaison: RightOperand tINFEG RightOperand {
     depiler_addr(ts); // c'est result_egal
     depiler_addr(ts); // c'est result_inf
     int result_or = ajouter_symbole(ts, "tmp", "tmp", 0);
-    ajouter_instruction(ti, "OR", result_or, result_egal, result_inf); // le nom c'est OR ou OU ?
+    
+    ajouter_instruction(ti, "OR", result_or, result_egal, result_inf); 
+    // A ou B = Non [ (Non A) et (Non B)]
     
     
     int next = ajouter_symbole(ts, "next", "tmp_if", 0);
 
     ajouter_instruction(ti, "JMF", result_or, next, 0);
 };
-
+*/
 // pk il reste des tmp à la fin ?
 // traduire les comparaisons
 

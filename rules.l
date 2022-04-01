@@ -23,6 +23,8 @@
 "printf" {return tPRINTF;}
 "if"    {return tIF;}
 "while"    {return tWHILE;}
+"else if"    {return tELIF;}
+"else"    {return tELSE;}
 "for"    {return tFOR;}
 "{"     {return tAO;}
 "}"     {return tAF;}

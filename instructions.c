@@ -14,13 +14,13 @@ instruction* init_ti() {
 void print_ti(instruction* tab) {
     int i;
     for (i=0; i < taille_ti; i++) {
-        print_instruction(tab[i]);
+        print_instruction(tab[i], i);
         printf("\n");
     }
 }
 
-void print_instruction(instruction i) {
-    printf("%s %d, %d, %d", i.nomInstruction, i.arg1, i.arg2, i.arg3);
+void print_instruction(instruction i, int indice) {
+    printf("%d - %s %d, %d, %d", indice, i.nomInstruction, i.arg1, i.arg2, i.arg3);
 }
 
 int get_taille_ti() {

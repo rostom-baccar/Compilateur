@@ -3,27 +3,9 @@
 #include <string.h>
 #include "symboles.h"
 
+
 int taille = 0;
 int profondeurMAX = 0;
-
-/*
-int main() {
-
-    symbole * ts = init_ts();
-    depiler(ts);
-    symbole s1 = ajouter_tmp(ts);
-    depiler(ts);
-    symbole s2 = ajouter_tmp(ts);
-    symbole s3 = ajouter_tmp(ts);
-    depiler(ts);
-    ajouter_symbole(ts, "a", "int", 0);
-    ajouter_symbole(ts, "b", "int", 0);
-    depiler(ts);
-    symbole s4 = ajouter_tmp(ts);
-    symbole s5 = ajouter_tmp(ts);
-    
-    print_ts(ts);
-}*/
 
 symbole* init_ts() {
     return malloc(TAILLE*sizeof(symbole*));
@@ -69,6 +51,7 @@ void supprimer_symbole(symbole * tab) {
 }
 
 int depiler_addr(symbole* tab) {
+    if (taille == 0) {exit(-1);}
     taille--;
     
     return taille + 1;
@@ -76,6 +59,7 @@ int depiler_addr(symbole* tab) {
 
 // nécessaire pour update adresse retour du jump
 symbole depiler_symbole(symbole* tab) {
+    if (taille == 0) {exit(-1);}
     taille--;
     return tab[taille];
 }

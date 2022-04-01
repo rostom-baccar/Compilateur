@@ -1,11 +1,14 @@
 int main() {
     
-    const int a;
-    a = 2;
-    bonjour(a+4);
-    
+    int a;
     int i;
-    if (i == 1) {
+    if (i == a) {
         i = a+4;
+    }
+    else if (a == 1) {
+        a = 2;
+    }
+    else {
+        a = 0;
     }
 }
