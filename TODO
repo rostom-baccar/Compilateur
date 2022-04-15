@@ -1,9 +1,15 @@
+--> DEBUG EXISTANT
+_problème indice table des symboles : 0 pas utilisé
+_si 0 utilisé (sprintf de ajouter_symbole qui prend taille-1), COP est décalé
+=> fout la merde dans le reste
+
 --> while
 
---> else if
+--> for
 
---> Pour les OU et ET logiques, c'est pas 0 qu'il faut mettre mais un AFC avec une variable qui vaut 0
-(pas confondre valeur et adresse)
+--> gérer commentaires ?
+
+--> INFE et SUPE existent -> pas besoin compliquer la vie
 
 --> peut pas faire int a = 0; (déclaration ou affectation mais pas les deux)
 

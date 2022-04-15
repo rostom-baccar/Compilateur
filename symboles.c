@@ -28,14 +28,18 @@ void print_symbole(symbole s) {
     printf("%s (%s, %d, %d) ", s.nomVariable, s.typeVariable, s.declare, s.profondeur);
 }
 
-int ajouter_symbole(symbole* tab, char* nom, char* type, int decl) {
+char * ajouter_symbole(symbole* tab, char* nom, char* type, int decl) {
     if (taille >= TAILLE) printf("TAILLE MAXIMALE DEPASSEE\n");
     symbole s = {declare:decl, profondeur:profondeurMAX};
     strcpy(s.nomVariable, nom);
     strcpy(s.typeVariable, type);
     tab[taille] = s;
     taille++;
-    return taille;
+    
+    char * taille_addr = malloc(3);
+    sprintf(taille_addr, "%d", taille);
+    
+    return taille_addr;
 }
 
 void supprimer_symbole(symbole * tab) {
@@ -50,11 +54,13 @@ void supprimer_symbole(symbole * tab) {
     taille -= nb;
 }
 
-int depiler_addr(symbole* tab) {
+char * depiler_addr(symbole* tab) {
     if (taille == 0) {exit(-1);}
     taille--;
     
-    return taille + 1;
+    char * taille_addr = malloc(3);
+    sprintf(taille_addr, "%d", taille+1);
+    return taille_addr;
 }
 
 // nécessaire pour update adresse retour du jump
@@ -65,17 +71,18 @@ symbole depiler_symbole(symbole* tab) {
 }
 
 
-int get_addr(symbole* tab, char* nom) {
+char * get_addr(symbole* tab, char* nom) {
     int i;
     for (i=0; i < taille; i++) {
         
         if (strcmp(tab[i].nomVariable, nom) == 0) {
-            return i;
+            char * i_addr = malloc(3);
+            sprintf(i_addr, "%d", i);
+            return i_addr;
         }
     }
-    
-    //if (strcmp("a", nom) == 0) {return 99;}
-    return -1;
+
+    return "-1";
 }
 
 

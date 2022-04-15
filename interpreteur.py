@@ -1,7 +1,14 @@
+import sys
+
+if len(sys. argv) > 1 and sys.argv[1] == 'debug':
+    debug = True
+else:
+    debug = False
+
 with open('asm.txt', 'r') as f:
     les_lignes = f.readlines()
 
-r = []
+r = [-6]*12
 instructions = []
 
 for ligne in les_lignes:
@@ -13,62 +20,109 @@ while i < len(instructions):
     
     asm = instructions[i]
     
+    try:
+        arg1 = int(asm[1])
+        arg2 = int(asm[2])
+        arg3 = int(asm[3])
+    
+    # Certains sont des '_' (pas besoin de faire la conversion dans ce cas là)
+    except ValueError:
+        #print(f"i:{i}")
+        pass
+    
     #ADD (1)
     if asm[0] == '1':
-        r[asm[1]] = r[asm[2]] + r[asm[3]]
+        if debug:
+            print(r)
+            print(f"[ADD] @{arg1} <- {r[arg2]} + {r[arg3]}")
+        r[arg1] = r[arg2] + r[arg3]
     
     #MUL (2)
     elif asm[0] == '2':
-        r[asm[1]] = r[asm[2]] * r[asm[3]]
+        if debug:
+            print(r)
+            print(f"[MUL] @{arg1} <- {r[arg2]} * {r[arg3]}")
+        r[arg1] = r[arg2] * r[arg3]
 
     #SOU (3)
     elif asm[0] == '3':
-        r[asm[1]] = r[asm[2]] - r[asm[3]]
+        if debug:
+            print(r)
+            print(f"[SOU] @{arg1} <- {r[arg2]} - {r[arg3]}")
+        r[arg1] = r[arg2] - r[arg3]
     
     #DIV (4)
     elif asm[0] == '4':
-        r[asm[1]] = r[asm[2]] / r[asm[3]]
+        if debug:
+            print(r)
+            print(f"[DIV] @{arg1} <- {r[arg2]} / {r[arg3]}")
+        r[arg1] = r[arg2] / r[arg3]
     
     #COP (5)
     elif asm[0] == '5':
-        r[asm[1]] = r[asm[2]]
+        if debug:
+            print(r)
+            print(f"[COP] @{arg1} <- @{arg2}")
+        r[arg1] = r[arg2]
     
     #AFC (6)
     elif asm[0] == '6':
-        r[asm[1]] = asm[2]
+        if debug:
+            print(r)
+            print(f"[AFC] @{arg1} <- {arg2}")
+        r[arg1] = arg2
     
     #JMP (7)
     elif asm[0] == '7':
-        i = asm[1]
+        if debug:
+            print(r)
+            print(f"JUMP TO {arg1}")
+        i = arg1
     
     #JMF (8)
     elif asm[0] == '8':
-        if not r[asm[1]]:
-            i = asm[2]
+        if not r[arg1]:
+            if debug:
+                print(r)
+                print(f"JUMP TO {arg2}")
+            i = arg2
             
     #INF (9)
     elif asm[0] == '9':
-        if r[asm[2]] < r[asm[3]]:
-            r[asm[1]] = 1
+        if debug:
+            print(r)
+            print(f"[INF] @{arg1} <- {r[arg2] < r[arg3]}")
+        if r[arg2] < r[arg3]:
+            r[arg1] = 1
         else:
-            r[asm[1]] = 0
+            r[arg1] = 0
     
     #SUP (A)
     elif asm[0] == 'A':
-        if r[asm[2]] > r[asm[3]]:
-            r[asm[1]] = 1
+        if debug:
+            print(r)
+            print(f"[SUP] @{arg1} <- {r[arg2] > r[arg3]}")
+        if r[arg2] > r[arg3]:
+            r[arg1] = 1
         else:
-            r[asm[1]] = 0
+            r[arg1] = 0
     
     #EQU (B)
     elif asm[0] == 'B':
-        if r[asm[2]] == r[asm[3]]:
-            r[asm[1]] = 1
+        if debug:
+            print(r)
+            print(f"[EQU] @{arg1} <- {r[arg2] == r[arg3]}")
+        if r[arg2] == r[arg3]:
+            r[arg1] = 1
         else:
-            r[asm[1]] = 0
+            r[arg1] = 0
     
     #PRI (C)
     elif asm[0] == 'C':
-        print(r[asm[1]])
+        if debug:
+            print(r)
+            print(f"PRINT : @{arg1}")
+        else:
+            print(r[arg1])
     
     i += 1

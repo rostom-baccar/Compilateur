@@ -30,6 +30,11 @@ Programme: Funs;
 
 Funs: Fun | Fun Funs ;
 Fun: FunType FunName tPO DeclArgs tPF tAO Body tAF;
+
+FunCall: tPRINTF tPO tID tPF {
+    ajouter_instruction(ti, "PRI", get_addr(ts, $3), "_", "_");
+};
+
 FunCall: FunName tPO CallArgs tPF;
 
 DeclArgs: VarType tID DeclArgNext |;
@@ -60,7 +65,9 @@ Ligne: Condition tAO {inc_depth();} Body tAF {
     
     // on met à jour le jump
     // on lui assigne la ligne en cours
-    ti[jmp_index].arg2 = get_taille_ti()-1;
+    char * ti_addr = malloc(3);
+    sprintf(ti_addr, "%d", get_taille_ti()-1);
+    strcpy(ti[jmp_index].arg2, ti_addr);
     
     // On ne supprimer pas le symbole associé à la condition
     // il permet de vérifier qu'il n'y a pas de code entre le if et le else
@@ -68,53 +75,55 @@ Ligne: Condition tAO {inc_depth();} Body tAF {
     };
 
 Declaration: VarType tID {
-  char vartype[5];
-  sprintf(vartype, "%d", $1);
-  ajouter_symbole(ts, $2, vartype, 1);
+    char vartype[5];
+    sprintf(vartype, "%d", $1);
+    ajouter_symbole(ts, $2, vartype, 1);
 };
 
 RightOperand: FunCall ;
 RightOperand: Operations;
 RightOperand: tNB {
-    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), $1, 0);
+    char * nb_char = malloc(3);
+    sprintf(nb_char, "%d", $1);
+    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), nb_char, "_");
 
 };
 RightOperand: tID {
-    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1), 0);
+    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1), "_");
 };
 
 
 Operations: RightOperand tSOUS RightOperand {
-    int arg3 = depiler_addr(ts);
-    int arg2 = depiler_addr(ts);
-    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
+    char * arg3 = depiler_addr(ts);
+    char * arg2 = depiler_addr(ts);
+    char * arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
     ajouter_instruction(ti, "SOU", arg1, arg2, arg3);
 
 };
 Operations: RightOperand tADD RightOperand {
-    int arg3 = depiler_addr(ts);
-    int arg2 = depiler_addr(ts);
-    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
+    char * arg3 = depiler_addr(ts);
+    char * arg2 = depiler_addr(ts);
+    char * arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
     ajouter_instruction(ti, "ADD", arg1, arg2, arg3);
 
 };
 Operations: RightOperand tDIV RightOperand {
-    int arg3 = depiler_addr(ts);
-    int arg2 = depiler_addr(ts);
-    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
+    char * arg3 = depiler_addr(ts);
+    char * arg2 = depiler_addr(ts);
+    char * arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
     ajouter_instruction(ti, "DIV", arg1, arg2, arg3);
 
 };
 Operations: RightOperand tMUL RightOperand {
-    int arg3 = depiler_addr(ts);
-    int arg2 = depiler_addr(ts);
-    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
+    char * arg3 = depiler_addr(ts);
+    char * arg2 = depiler_addr(ts);
+    char * arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
     ajouter_instruction(ti, "MUL", arg1, arg2, arg3);
 
 };
 
 Affectation : tID tEGAL RightOperand {
-    ajouter_instruction(ti, "COP", get_addr(ts, $1), depiler_addr(ts), 0);
+    ajouter_instruction(ti, "COP", get_addr(ts, $1), depiler_addr(ts), "_");
 };
 
 
@@ -122,7 +131,7 @@ Condition: tWHILE ArgCondition | tFOR ForCondition ;
 
 Condition: tIF ArgCondition {
 
-    int condition = depiler_addr(ts); 
+    char * condition = depiler_addr(ts); 
     // on dépile et remet juste après car besoin ensuite pour les elif/else
     // contient même adresse donc rien ne s'est passé du point de vue instruction
     ajouter_symbole(ts, "result_condition", "tmp", 0);
@@ -133,24 +142,25 @@ Condition: tIF ArgCondition {
     
     // on stocke l'emplacement dans ti de cette instruction pour pouvoir
     // modifier l'adresse de ligne de retour -> dans le symbole tmp_if
-    ajouter_instruction(ti, "JMF", condition, -1, 0);
+    ajouter_instruction(ti, "JMF", condition, "-1", "_");
 };
 
 Condition: tELIF ArgCondition {
 
     // Opération : !cond_if && cond_elif
     
-    int cond_addr_elif = depiler_addr(ts); // condition du else if
-    int cond_addr = depiler_addr(ts); // condition du if
+    char * cond_addr_elif = depiler_addr(ts); // condition du else if
+    char * cond_addr = depiler_addr(ts); // condition du if
     
-    int result_egal = ajouter_symbole(ts, "tmp", "result_egal", 0);
-    ajouter_instruction(ti, "EQU", result_egal, 0, cond_addr);
+    char * result_egal = ajouter_symbole(ts, "tmp", "result_egal", 0);
+    
+    ajouter_instruction(ti, "EQU", result_egal, "0", cond_addr); // @0 contient 0
     depiler_addr(ts); // on dépile le result_egal 
     
     // On a besoin d'un tmp_if pour mettre à jour le pointeur
     // et on a besoin d'un result condition pour les prochains elif/else
     // Dès qu'on sort du else if on s'attend à avoir tmp_if donc c'est la dernière tmp à push
-    int result_condition = ajouter_symbole(ts, "result_condition", "tmp", 0);
+    char * result_condition = ajouter_symbole(ts, "result_condition", "tmp", 0);
     
     // 1 = true, 0 = false ==>  1x1=true, reste=false comme &&
     ajouter_instruction(ti, "MUL", result_condition, result_egal, cond_addr_elif);
@@ -158,24 +168,24 @@ Condition: tELIF ArgCondition {
     ajouter_symbole(ts, "tmp_if", "tmp", get_taille_ti());
     
     // result_condition = !cond_addr_if && cond_addr_elif
-    ajouter_instruction(ti, "JMF", result_condition, -1, 0);
+    ajouter_instruction(ti, "JMF", result_condition, "-1", "_");
     
 };
 Condition: tELSE {
     // on supprime la variable temporaire qui correspond à la condition
-    int cond_addr = depiler_addr(ts);
+    char * cond_addr = depiler_addr(ts);
     
-    int result_egal = ajouter_symbole(ts, "tmp", "result_egal", 0);
+    char * result_egal = ajouter_symbole(ts, "tmp", "result_egal", 0);
     
     // évaluer x == 0
     // si cond_addr == 0 résultat est 1 (true)
     // si cond_addr == 1 résultat est 0 (false)
     // donc resultat contient !cond_addr
-    ajouter_instruction(ti, "EQU", result_egal, 0, cond_addr);
+    ajouter_instruction(ti, "EQU", result_egal, "0", cond_addr);
     depiler_addr(ts); // on dépile le result_egal
     
     ajouter_symbole(ts, "tmp_if", "tmp", get_taille_ti());
-    ajouter_instruction(ti, "JMF", result_egal, -1, 0);
+    ajouter_instruction(ti, "JMF", result_egal, "-1", "_");
     
     // on ne créé pas de result_condition car c'est un else
 };
@@ -185,7 +195,7 @@ DeclarationIndice: Affectation | tID;
 
 Bool: Comparaison;
 Bool: tID {
-    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1), 0);
+    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1), "_");
 };
 /*
 Comparaison: RightOperand tINF RightOperand {
@@ -203,10 +213,10 @@ Comparaison: RightOperand tSUP RightOperand {
 */
 
 Comparaison: RightOperand tEGALEGAL RightOperand {
-    int op1 = depiler_addr(ts);
-    int op2 = depiler_addr(ts);
+    char * op1 = depiler_addr(ts);
+    char * op2 = depiler_addr(ts);
     
-    int result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
+    char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
     ajouter_instruction(ti, "EQU", result_egal, op1, op2);
 };
 
@@ -242,11 +252,18 @@ Comparaison: RightOperand tINFEG RightOperand {
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
 int main(void) {
   printf("Compilateur\n");
-  yydebug=1;
+  //yydebug=1;
   ts = init_ts();
   ti = init_ti();
+  // On fait des comparaisons logiques ensuite (else if par ex.)
+  // Il est pratique d'avoir un 0 pré existant plutôt que de créer une variable = 0
+  // à chaque comparaison logique : EQU 14 14 0 -> @14 = (@14 == @0) où @0 contient 0
+  // De même pour 1
+  ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "zero", "int", 1), "0", "_");
+  ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "one", "int", 1), "1", "_");
   yyparse();
-  print_ts(ts);
-  print_ti(ti);
+  //print_ts(ts);
+  //print_ti(ti);
+  write_from_table(ti);
   return 0;
 }
