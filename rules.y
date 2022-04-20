@@ -56,6 +56,15 @@ Ligne: FunCall tPVIRG;
 Ligne: Declaration tPVIRG;
 Ligne: Affectation tPVIRG;
 Ligne: Condition tAO {inc_depth();} Body tAF {
+
+    // En sortie d'une condition if, else if et else, la pile de symboles est comme ça :
+    // 1:tmp_if (declare contient la position de l'instruction à modifier)
+    // 2:result_condition (utilisée pour les JMF, inutile ensuite, à dépiler et ignorer)
+    // 3:result_end (important pour la suite des conditions, n'existe pas pour les else)
+
+    // Il est important de dépiler result_condition car les else if suivants s'attendent a
+    // avoir condition puis end dans l'ordre dans la pile.
+
     supprimer_symbole(ts);
     dec_depth();
     // On a décrémenté la profondeur et supprimé les variables crées lors du if
@@ -69,9 +78,9 @@ Ligne: Condition tAO {inc_depth();} Body tAF {
     sprintf(ti_addr, "%d", get_taille_ti()-1);
     strcpy(ti[jmp_index].arg2, ti_addr);
     
-    // On ne supprimer pas le symbole associé à la condition
-    // il permet de vérifier qu'il n'y a pas de code entre le if et le else
-    // et il permet de retrouver la condition pour les else if et else
+    // On a dépilé le tmp_if
+    // Il reste à dépiler le result_condition
+    depiler_addr(ts);
     };
 
 Declaration: VarType tID {
@@ -131,10 +140,18 @@ Condition: tWHILE ArgCondition | tFOR ForCondition ;
 
 Condition: tIF ArgCondition {
 
-    char * condition = depiler_addr(ts); 
+    char * condition = depiler_addr(ts);
     // on dépile et remet juste après car besoin ensuite pour les elif/else
     // contient même adresse donc rien ne s'est passé du point de vue instruction
+    char * result_end = ajouter_symbole(ts, "result_end", "tmp", 0);
     ajouter_symbole(ts, "result_condition", "tmp", 0);
+    
+    // On supprime après chaque condition le result_condition en trop
+    // donc je garde le même patterne de sorte que la pile de symboles en sortie
+    // d'une else if et d'un if soient les même (1:tmp_if, 2:result_condition, 3:end)
+    // Le end d'un if est la condition du if.
+    ajouter_instruction(ti, "COP", result_end, condition, "_");
+    
     
     // taille_ti correspond à l'index du Jump du if dans la table d'instruction
     // ajouter_symbole incrémente taille_ti et l'indice correspond à taille_ti-1
@@ -147,23 +164,42 @@ Condition: tIF ArgCondition {
 
 Condition: tELIF ArgCondition {
 
-    // Opération : !cond_if && cond_elif
+    // Opération : !end && cond_elif
+    // end = end || cond_elif
+    
+    // Pour un else if, on a besoin de savoir si une condition précédente
+    // était vérifiée (si un if = true, aucun else accepté).
+    // End correspond à la variable "une condition précédente est vraie"
     
     char * cond_addr_elif = depiler_addr(ts); // condition du else if
-    char * cond_addr = depiler_addr(ts); // condition du if
+    char * end_addr = depiler_addr(ts); // si la chaine de condition est finie
     
-    char * result_egal = ajouter_symbole(ts, "tmp", "result_egal", 0);
+    char * result_not = ajouter_symbole(ts, "tmp", "result_not", 0);
     
-    ajouter_instruction(ti, "EQU", result_egal, "0", cond_addr); // @0 contient 0
-    depiler_addr(ts); // on dépile le result_egal 
+    ajouter_instruction(ti, "NOT", result_not, end_addr, "_");
+    depiler_addr(ts); // on dépile le result_not
     
     // On a besoin d'un tmp_if pour mettre à jour le pointeur
-    // et on a besoin d'un result condition pour les prochains elif/else
+    // et on a besoin d'un end pour les prochains elif/else
     // Dès qu'on sort du else if on s'attend à avoir tmp_if donc c'est la dernière tmp à push
+    // Le result_condition est obsolète passé cette condition, donc on le met juste après le tmp_if
+    // pour pouvoir le dépiler après le tmp_if (el l'ignorer)
+    // Il restera en haut de la pile le result_end qui est lui important par la suite
+    char * result_end = ajouter_symbole(ts, "result_end", "tmp", 0);
     char * result_condition = ajouter_symbole(ts, "result_condition", "tmp", 0);
     
-    // 1 = true, 0 = false ==>  1x1=true, reste=false comme &&
-    ajouter_instruction(ti, "MUL", result_condition, result_egal, cond_addr_elif);
+    // on entre dans le if si (!end && elif) <-> (result_not && cond_addr_elif)
+    ajouter_instruction(ti, "AND", result_condition, result_not, cond_addr_elif);
+    
+    
+    // On a pas besoin de savoir si le else if précédent est vrai ou faux, juste de si
+    // un des else if précédent est vrai. Donc on a pas besoin de result_condition dans le futur.
+    // On a envie de réaffecter sa valeur à celle de end qui est utile dans le futur,
+    // mais le JMF utilise result_condition. On ne peut pas assigner end après le JMF car cette
+    // opération permet de traiter les prochains else et doit être effectuée dans tous les cas.
+    // Donc on doit créer une variable end séparée. On ajoute le symbole juste avant condition.
+    ajouter_instruction(ti, "OR", result_end, result_condition, end_addr);
+    
     
     ajouter_symbole(ts, "tmp_if", "tmp", get_taille_ti());
     
@@ -173,21 +209,21 @@ Condition: tELIF ArgCondition {
 };
 Condition: tELSE {
     // on supprime la variable temporaire qui correspond à la condition
-    char * cond_addr = depiler_addr(ts);
+    char * end_addr = depiler_addr(ts);
     
-    char * result_egal = ajouter_symbole(ts, "tmp", "result_egal", 0);
+    char * result_not = ajouter_symbole(ts, "tmp", "result_not", 0);
+    // sera dépilé en fin de else comme les result_condition
     
-    // évaluer x == 0
-    // si cond_addr == 0 résultat est 1 (true)
-    // si cond_addr == 1 résultat est 0 (false)
-    // donc resultat contient !cond_addr
-    ajouter_instruction(ti, "EQU", result_egal, "0", cond_addr);
-    depiler_addr(ts); // on dépile le result_egal
+    ajouter_instruction(ti, "NOT", result_not, end_addr, "_");
+    
+    // result_condition = !end
+    // si aucun if précédent n'est vrai, else passe
+    // donc pas besoin de AND ce coup-ci
     
     ajouter_symbole(ts, "tmp_if", "tmp", get_taille_ti());
-    ajouter_instruction(ti, "JMF", result_egal, "-1", "_");
+    ajouter_instruction(ti, "JMF", result_not, "-1", "_");
     
-    // on ne créé pas de result_condition car c'est un else
+    
 };
 ArgCondition: tPO Bool tPF;
 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF;
@@ -258,8 +294,11 @@ int main(void) {
   // Il est pratique d'avoir un 0 pré existant plutôt que de créer une variable = 0
   // à chaque comparaison logique : EQU 14 14 0 -> @14 = (@14 == @0) où @0 contient 0
   // De même pour 1
-  ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "zero", "int", 1), "0", "_");
-  ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "one", "int", 1), "1", "_");
+  // UPDATE : ajouté OR, AND et NOT instructions pour enlever ce problème
+  //ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "zero", "int", 1), "0", "_");
+  //ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "one", "int", 1), "1", "_");
+  
+  
   yyparse();
   //print_ts(ts);
   //print_ti(ti);

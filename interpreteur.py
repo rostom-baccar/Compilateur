@@ -125,4 +125,25 @@ while i < len(instructions):
         else:
             print(r[arg1])
     
+    #AND (D)
+    elif asm[0] == 'D':
+        if debug:
+            print(r)
+            print(f"[AND] : @{arg1} <- @{arg2} && @{arg3}")
+        r[arg1] = int(r[arg2] and r[arg3])
+    
+    #OR (E)
+    elif asm[0] == 'E':
+        if debug:
+            print(r)
+            print(f"[OR] : @{arg1} <- @{arg2} || @{arg3}")
+        r[arg1] = int(r[arg2] or r[arg3])
+    
+    #NOT (F)
+    elif asm[0] == 'F':
+        if debug:
+            print(r)
+            print(f"[NOT] : @{arg1} <- !@{arg2}")
+        r[arg1] = int(not r[arg2])
+    
     i += 1
