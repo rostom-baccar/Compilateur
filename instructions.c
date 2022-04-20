@@ -97,6 +97,15 @@ char get_op_code(instruction i) {
 	else if (strcmp(i.nomInstruction, "PRI") == 0) {
 	    return 'C';
 	}
+	else if (strcmp(i.nomInstruction, "AND") == 0) {
+	    return 'D';
+	}
+	else if (strcmp(i.nomInstruction, "OR") == 0) {
+	    return 'E';
+	}
+	else if (strcmp(i.nomInstruction, "NOT") == 0) {
+	    return 'F';
+	}
 	else {
         return '_';
 	}

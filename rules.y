@@ -141,6 +141,7 @@ Condition: tWHILE ArgCondition | tFOR ForCondition ;
 Condition: tIF ArgCondition {
 
     char * condition = depiler_addr(ts);
+    
     // on dépile et remet juste après car besoin ensuite pour les elif/else
     // contient même adresse donc rien ne s'est passé du point de vue instruction
     char * result_end = ajouter_symbole(ts, "result_end", "tmp", 0);
@@ -174,19 +175,21 @@ Condition: tELIF ArgCondition {
     char * cond_addr_elif = depiler_addr(ts); // condition du else if
     char * end_addr = depiler_addr(ts); // si la chaine de condition est finie
     
-    char * result_not = ajouter_symbole(ts, "tmp", "result_not", 0);
-    
-    ajouter_instruction(ti, "NOT", result_not, end_addr, "_");
-    depiler_addr(ts); // on dépile le result_not
+    yyerror("Unexpected line before else if\n");
     
     // On a besoin d'un tmp_if pour mettre à jour le pointeur
     // et on a besoin d'un end pour les prochains elif/else
     // Dès qu'on sort du else if on s'attend à avoir tmp_if donc c'est la dernière tmp à push
     // Le result_condition est obsolète passé cette condition, donc on le met juste après le tmp_if
-    // pour pouvoir le dépiler après le tmp_if (el l'ignorer)
+    // pour pouvoir le dépiler après le tmp_if (et l'ignorer)
     // Il restera en haut de la pile le result_end qui est lui important par la suite
     char * result_end = ajouter_symbole(ts, "result_end", "tmp", 0);
     char * result_condition = ajouter_symbole(ts, "result_condition", "tmp", 0);
+    
+    char * result_not = ajouter_symbole(ts, "tmp", "result_not", 0);
+    
+    ajouter_instruction(ti, "NOT", result_not, end_addr, "_");
+    depiler_addr(ts); // on dépile le result_not
     
     // on entre dans le if si (!end && elif) <-> (result_not && cond_addr_elif)
     ajouter_instruction(ti, "AND", result_condition, result_not, cond_addr_elif);

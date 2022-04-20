@@ -1,19 +1,7 @@
---> DEBUG EXISTANT
-_le else correspond à !if && !elif && !elif2
-_là c'est !elif2
+errors custom
 
 
-if = if
-end = end
-
-elif = !end && elif
-end = end || elif
-
-elif2 = !end && elif2
-
-else = !if && !elif2
-
---> ajouter OR, AND et NOT à interpréteur, yacc et ALU
+--> ajouter OR, AND et NOT à ALU
 
 --> while
 
