@@ -37,7 +37,7 @@ char * ajouter_symbole(symbole* tab, char* nom, char* type, int decl) {
     taille++;
     
     char * taille_addr = malloc(3);
-    sprintf(taille_addr, "%d", taille);
+    sprintf(taille_addr, "%d", taille-1);
     
     return taille_addr;
 }
@@ -59,7 +59,7 @@ char * depiler_addr(symbole* tab) {
     taille--;
     
     char * taille_addr = malloc(3);
-    sprintf(taille_addr, "%d", taille+1);
+    sprintf(taille_addr, "%d", taille);
     return taille_addr;
 }
 

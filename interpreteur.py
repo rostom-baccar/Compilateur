@@ -111,7 +111,7 @@ while i < len(instructions):
     elif asm[0] == 'B':
         if debug:
             print(r)
-            print(f"[EQU] @{arg1} <- {r[arg2] == r[arg3]}")
+            print(f"[EQU] @{arg1} <- @{arg2} == @{arg3}")
         if r[arg2] == r[arg3]:
             r[arg1] = 1
         else:

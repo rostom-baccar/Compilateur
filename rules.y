@@ -89,7 +89,7 @@ RightOperand: tNB {
 
 };
 RightOperand: tID {
-    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1), "_");
+    ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1), "_");
 };
 
 
@@ -195,7 +195,7 @@ DeclarationIndice: Affectation | tID;
 
 Bool: Comparaison;
 Bool: tID {
-    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1), "_");
+    ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1), "_");
 };
 /*
 Comparaison: RightOperand tINF RightOperand {
@@ -251,7 +251,6 @@ Comparaison: RightOperand tINFEG RightOperand {
 %%
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
 int main(void) {
-  printf("Compilateur\n");
   //yydebug=1;
   ts = init_ts();
   ti = init_ti();

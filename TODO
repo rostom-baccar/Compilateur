@@ -1,7 +1,7 @@
 --> DEBUG EXISTANT
-_problème indice table des symboles : 0 pas utilisé
-_si 0 utilisé (sprintf de ajouter_symbole qui prend taille-1), COP est décalé
-=> fout la merde dans le reste
+_le else correspond à !if && !elif && !elif2
+_là c'est !elif2
+
 
 --> while
 

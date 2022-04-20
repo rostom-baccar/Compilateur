@@ -1524,7 +1524,7 @@ yyreduce:
   case 36:
 #line 91 "rules.y"
                   {
-    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, (yyvsp[0].varchar)), "_");
+    ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, (yyvsp[0].varchar)), "_");
 }
 #line 1530 "y.tab.c"
     break;
@@ -1662,7 +1662,7 @@ yyreduce:
   case 52:
 #line 197 "rules.y"
           {
-    ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, (yyvsp[0].varchar)), "_");
+    ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, (yyvsp[0].varchar)), "_");
 }
 #line 1668 "y.tab.c"
     break;
@@ -1916,7 +1916,6 @@ yyreturn:
 
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
 int main(void) {
-  printf("Compilateur\n");
   //yydebug=1;
   ts = init_ts();
   ti = init_ti();
