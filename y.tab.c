@@ -73,13 +73,16 @@
 #include <string.h>
 #include "symboles.h"
 #include "instructions.h"
+
 int varchar[16];
 int yylex(); //fix warning
+void yywarning(char *s);
+extern int lineno; // count the lines
 
 symbole * ts;
 instruction * ti;
 
-#line 83 "y.tab.c"
+#line 86 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -193,10 +196,10 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 14 "rules.y"
+#line 17 "rules.y"
 int nb; char varchar[16];
 
-#line 200 "y.tab.c"
+#line 203 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -520,11 +523,11 @@ union yyalloc
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  32
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  28
+#define YYNNTS  29
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  57
+#define YYNRULES  58
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  105
+#define YYNSTATES  106
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   286
@@ -574,12 +577,12 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    28,    28,    30,    30,    31,    33,    37,    39,    39,
-      40,    40,    42,    42,    43,    43,    45,    45,    46,    46,
-      47,    48,    50,    50,    52,    53,    53,    54,    55,    56,
-      57,    57,    85,    93,   102,   103,   104,   110,   115,   122,
-     129,   136,   143,   151,   156,   156,   158,   183,   233,   255,
-     256,   257,   257,   259,   260,   264,   272,   280
+       0,    31,    31,    33,    33,    34,    36,    40,    42,    42,
+      43,    43,    45,    45,    46,    46,    48,    48,    49,    49,
+      50,    51,    53,    53,    55,    56,    56,    57,    58,    59,
+      60,    60,   102,   114,   127,   128,   129,   135,   152,   159,
+     166,   173,   180,   188,   194,   195,   195,   207,   227,   275,
+     299,   300,   301,   301,   303,   304,   308,   316,   324
 };
 #endif
 
@@ -595,8 +598,9 @@ static const char *const yytname[] =
   "$accept", "Programme", "Funs", "Fun", "FunCall", "DeclArgs",
   "DeclArgNext", "CallArgs", "CallArgNext", "PreType", "Type", "FunType",
   "VarType", "FunName", "Body", "Lignes", "Ligne", "$@1", "Declaration",
-  "RightOperand", "Operations", "Affectation", "Condition", "ArgCondition",
-  "ForCondition", "DeclarationIndice", "Bool", "Comparaison", YY_NULLPTR
+  "RightOperand", "Operations", "Affectation", "Condition", "$@2",
+  "ArgCondition", "ForCondition", "DeclarationIndice", "Bool",
+  "Comparaison", YY_NULLPTR
 };
 #endif
 
@@ -617,7 +621,7 @@ static const yytype_int16 yytoknum[] =
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-55)
+#define YYTABLE_NINF (-56)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -626,17 +630,17 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -1,   -47,   -47,     8,   -47,    -1,   -47,   -11,   -47,   -47,
-     -47,   -47,    20,    13,   -47,    24,    -1,    10,    37,   -47,
-      32,    31,    13,   -47,    45,    51,    51,    53,    51,   -47,
-      58,    39,    44,    72,    73,   -47,    31,    62,    64,    78,
-     -47,    54,    -4,   -47,   -47,    56,   -47,   -47,     9,   -47,
-      83,     9,   -47,   -47,   -47,   -47,   -47,    84,     9,   -47,
-       2,   -47,    55,   -47,    85,   -47,    58,   -47,    69,    87,
-      63,     9,    88,    59,    31,   -47,    36,     9,     9,     9,
-       9,     9,     9,     9,   -47,    -4,    63,   -47,     9,   -47,
-      89,    36,    36,   -47,   -47,    63,    63,    63,    75,   -47,
-     -47,    61,    58,    90,   -47
+      -5,   -47,   -47,     4,   -47,    -5,   -47,    -6,   -47,   -47,
+     -47,   -47,     5,    25,   -47,    22,    -5,    21,    50,   -47,
+      41,     0,    25,   -47,    54,    56,   -47,    62,    56,   -47,
+      74,    46,    47,    76,    75,   -47,     0,    64,    66,    78,
+     -47,    55,    10,   -47,    56,    57,   -47,   -47,    31,   -47,
+      84,    31,   -47,   -47,   -47,   -47,   -47,    85,    31,   -47,
+      49,   -47,    40,   -47,    86,   -47,   -47,    74,   -47,    70,
+      77,    65,    31,    87,    61,     0,   -47,    36,    31,    31,
+      31,    31,    31,    31,    31,   -47,    10,    65,   -47,    31,
+     -47,    88,    36,    36,   -47,   -47,    65,    65,    65,    79,
+     -47,   -47,    63,    74,    91,   -47
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -646,31 +650,31 @@ static const yytype_int8 yydefact[] =
 {
        0,    18,    19,     0,     2,     3,    20,     0,     1,     4,
       22,    23,     0,    17,    16,     0,     0,     0,     0,    21,
-      11,    17,    17,     8,     0,     0,     0,     0,     0,    48,
+      11,    17,    17,     8,     0,     0,    45,     0,     0,    49,
       23,     0,     0,     0,     0,    24,    17,     0,     0,     0,
-      10,     0,     0,    46,    44,     0,    45,    47,     0,    27,
+      10,     0,     0,    47,     0,     0,    44,    48,     0,    27,
       32,    13,     5,    25,    28,    29,    30,     0,     0,    36,
-      37,    34,     0,    35,     0,    53,    52,    51,     0,    37,
-      43,     0,     0,    15,    17,     6,    38,     0,     0,     0,
-       0,     0,     0,     0,    49,     0,    33,     7,    13,    12,
-       0,    39,    40,    41,    42,    56,    57,    55,     0,    14,
-      31,     0,     0,     0,    50
+      37,    34,     0,    35,     0,    54,    46,    53,    52,     0,
+      37,    43,     0,     0,    15,    17,     6,    38,     0,     0,
+       0,     0,     0,     0,     0,    50,     0,    33,     7,    13,
+      12,     0,    39,    40,    41,    42,    57,    58,    56,     0,
+      14,    31,     0,     0,     0,    51
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -47,   -47,    92,   -47,   -20,    76,   -47,    11,   -47,   -47,
-      86,   -47,     6,    93,    27,    67,   -47,   -47,   -47,   -46,
-     -47,   -45,   -47,   -15,   -47,   -47,    19,   -47
+     -47,   -47,    92,   -47,   -20,    71,   -47,    11,   -47,   -47,
+      83,   -47,    -7,    94,    27,    67,   -47,   -47,   -47,   -46,
+     -47,   -45,   -47,   -47,   -25,   -47,   -47,    18,   -47
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     3,     4,     5,    61,    15,    23,    72,    89,    16,
-       6,     7,    32,    33,    34,    35,    36,    74,    37,    62,
-      63,    38,    39,    43,    46,    68,    64,    65
+      -1,     3,     4,     5,    61,    15,    23,    73,    90,    16,
+       6,     7,    32,    33,    34,    35,    36,    75,    37,    62,
+      63,    38,    39,    44,    43,    46,    69,    64,    65
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -678,32 +682,32 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      67,    31,    70,    10,    58,    73,   -23,   -54,     8,    24,
-      10,    44,    76,    47,     1,     2,    31,    58,    -9,    17,
-      11,   -54,    24,    10,    13,    86,    59,    60,    17,    18,
-      14,    91,    92,    93,    94,    95,    96,    97,   -26,    59,
-      69,    20,    73,    21,    24,    10,    79,    80,    14,    41,
-      22,    25,    26,    27,    31,    42,   103,    45,    49,    28,
-      29,    48,    30,    77,    78,    79,    80,    77,    78,    79,
-      80,    77,    78,    79,    80,    50,    51,    88,    81,    82,
-      52,    54,    83,    55,    56,    57,    71,    66,    85,    75,
-      84,   -23,   102,    87,   101,   104,   100,     9,    40,    99,
-      12,    90,    19,    53,    98
+      68,    31,    71,    47,     8,    74,    17,   -26,    10,    13,
+       1,     2,    77,    24,    10,    17,    31,    14,    58,    66,
+      25,    26,    27,    24,    10,    11,    87,    18,    28,    29,
+      -9,    30,    92,    93,    94,    95,    96,    97,    98,    58,
+      59,    60,    14,    74,    24,    10,    80,    81,    78,    79,
+      80,    81,    20,   -23,   -55,    31,    21,   104,    41,    22,
+      42,    59,    70,    82,    83,    49,    45,    84,   -55,    78,
+      79,    80,    81,    78,    79,    80,    81,    48,    50,    89,
+      51,   -23,    52,    54,    56,    55,    57,    72,    67,    86,
+      76,    85,    88,    40,   103,   101,   105,     9,   102,    19,
+     100,    12,    91,    53,    99
 };
 
 static const yytype_int8 yycheck[] =
 {
-      45,    21,    48,    14,     8,    51,     4,     5,     0,    13,
-      14,    26,    58,    28,    15,    16,    36,     8,     5,    13,
-      31,    19,    13,    14,     4,    71,    30,    31,    22,     5,
-      17,    77,    78,    79,    80,    81,    82,    83,     7,    30,
-      31,    31,    88,     6,    13,    14,    10,    11,    17,     4,
-      18,    20,    21,    22,    74,     4,   101,     4,    19,    28,
-      29,     3,    31,     8,     9,    10,    11,     8,     9,    10,
-      11,     8,     9,    10,    11,    31,     4,    18,    23,    24,
-       7,    19,    27,    19,     6,    31,     3,    31,    19,     5,
-       5,     4,    31,     5,    19,     5,     7,     5,    22,    88,
-       7,    74,    16,    36,    85
+      45,    21,    48,    28,     0,    51,    13,     7,    14,     4,
+      15,    16,    58,    13,    14,    22,    36,    17,     8,    44,
+      20,    21,    22,    13,    14,    31,    72,     5,    28,    29,
+       5,    31,    78,    79,    80,    81,    82,    83,    84,     8,
+      30,    31,    17,    89,    13,    14,    10,    11,     8,     9,
+      10,    11,    31,     4,     5,    75,     6,   102,     4,    18,
+       4,    30,    31,    23,    24,    19,     4,    27,    19,     8,
+       9,    10,    11,     8,     9,    10,    11,     3,    31,    18,
+       4,     4,     7,    19,     6,    19,    31,     3,    31,    19,
+       5,     5,     5,    22,    31,     7,     5,     5,    19,    16,
+      89,     7,    75,    36,    86
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -714,13 +718,13 @@ static const yytype_int8 yystos[] =
       14,    31,    45,     4,    17,    37,    41,    44,     5,    42,
       31,     6,    18,    38,    13,    20,    21,    22,    28,    29,
       31,    36,    44,    45,    46,    47,    48,    50,    53,    54,
-      37,     4,     4,    55,    55,     4,    56,    55,     3,    19,
+      37,     4,     4,    56,    55,     4,    57,    56,     3,    19,
       31,     4,     7,    47,    19,    19,     6,    31,     8,    30,
-      31,    36,    51,    52,    58,    59,    31,    53,    57,    31,
-      51,     3,    39,    51,    49,     5,    51,     8,     9,    10,
-      11,    23,    24,    27,     5,    19,    51,     5,    18,    40,
-      46,    51,    51,    51,    51,    51,    51,    51,    58,    39,
-       7,    19,    31,    53,     5
+      31,    36,    51,    52,    59,    60,    56,    31,    53,    58,
+      31,    51,     3,    39,    51,    49,     5,    51,     8,     9,
+      10,    11,    23,    24,    27,     5,    19,    51,     5,    18,
+      40,    46,    51,    51,    51,    51,    51,    51,    51,    59,
+      39,     7,    19,    31,    53,     5
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -730,8 +734,8 @@ static const yytype_int8 yyr1[] =
       38,    38,    39,    39,    40,    40,    41,    41,    42,    42,
       43,    44,    45,    45,    46,    47,    47,    48,    48,    48,
       49,    48,    50,    50,    51,    51,    51,    51,    52,    52,
-      52,    52,    52,    53,    54,    54,    54,    54,    54,    55,
-      56,    57,    57,    58,    58,    59,    59,    59
+      52,    52,    52,    53,    54,    55,    54,    54,    54,    54,
+      56,    57,    58,    58,    59,    59,    60,    60,    60
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -741,8 +745,8 @@ static const yytype_int8 yyr2[] =
        2,     0,     2,     0,     2,     0,     1,     0,     1,     1,
        1,     2,     1,     1,     1,     2,     0,     2,     2,     2,
        0,     5,     2,     4,     1,     1,     1,     1,     2,     3,
-       3,     3,     3,     3,     2,     2,     2,     2,     1,     3,
-       7,     1,     1,     1,     1,     3,     3,     3
+       3,     3,     3,     3,     2,     0,     3,     2,     2,     1,
+       3,     7,     1,     1,     1,     1,     3,     3,     3
 };
 
 
@@ -1438,136 +1442,170 @@ yyreduce:
   switch (yyn)
     {
   case 6:
-#line 33 "rules.y"
+#line 36 "rules.y"
                              {
-    ajouter_instruction(ti, "PRI", get_addr(ts, (yyvsp[-1].varchar)), "_", "_");
+    ajouter_instruction(ti, "PRI", get_addr(ts, (yyvsp[-1].varchar), 0), "_", "_");
 }
-#line 1446 "y.tab.c"
+#line 1450 "y.tab.c"
     break;
 
   case 16:
-#line 45 "rules.y"
+#line 48 "rules.y"
                 { (yyval.nb) = 1; }
-#line 1452 "y.tab.c"
+#line 1456 "y.tab.c"
     break;
 
   case 17:
-#line 45 "rules.y"
+#line 48 "rules.y"
                               { (yyval.nb) = 0; }
-#line 1458 "y.tab.c"
+#line 1462 "y.tab.c"
     break;
 
   case 18:
-#line 46 "rules.y"
+#line 49 "rules.y"
            { (yyval.nb) = 10; }
-#line 1464 "y.tab.c"
+#line 1468 "y.tab.c"
     break;
 
   case 19:
-#line 46 "rules.y"
+#line 49 "rules.y"
                                { (yyval.nb) = 20; }
-#line 1470 "y.tab.c"
+#line 1474 "y.tab.c"
     break;
 
   case 21:
-#line 48 "rules.y"
+#line 51 "rules.y"
                       { (yyval.nb) = (yyvsp[-1].nb) + (yyvsp[0].nb); }
-#line 1476 "y.tab.c"
+#line 1480 "y.tab.c"
     break;
 
   case 30:
-#line 57 "rules.y"
+#line 60 "rules.y"
                      {inc_depth();}
-#line 1482 "y.tab.c"
+#line 1486 "y.tab.c"
     break;
 
   case 31:
-#line 57 "rules.y"
+#line 60 "rules.y"
                                              {
 
     // En sortie d'une condition if, else if et else, la pile de symboles est comme ça :
-    // 1:tmp_if (declare contient la position de l'instruction à modifier)
-    // 2:result_condition (utilisée pour les JMF, inutile ensuite, à dépiler et ignorer)
+    // 1:tmp_if (initialise contient la position de l'instruction à modifier)
     // 3:result_end (important pour la suite des conditions, n'existe pas pour les else)
-
-    // Il est important de dépiler result_condition car les else if suivants s'attendent a
-    // avoir condition puis end dans l'ordre dans la pile.
 
     supprimer_symbole(ts);
     dec_depth();
     // On a décrémenté la profondeur et supprimé les variables crées lors du if
     // Ainsi, le premier symbole tmp correspond au symbole qui contient l'adresse
     // de l'instruction jump à modifier
-    int jmp_index = depiler_symbole(ts).declare;
     
-    // on met à jour le jump
-    // on lui assigne la ligne en cours
+    symbole tmp_condition = depiler_symbole(ts);
+    
+    int jmp_index = tmp_condition.initialise;
+    
+    
+    // La valeur du JMF  dépend de si c'est un if ou un while
     char * ti_addr = malloc(3);
-    sprintf(ti_addr, "%d", get_taille_ti()-1);
-    strcpy(ti[jmp_index].arg2, ti_addr);
     
-    // On a dépilé le tmp_if
-    // Il reste à dépiler le result_condition
-    depiler_addr(ts);
+    
+    // Si c'est un while, il faut aussi ajouter une instruction jump
+    // jmp_index c'est l'adresse du JMF donc c'est aussi le début du while
+    if (strcmp(tmp_condition.nomVariable, "tmp_while") == 0) {
+    
+    
+        // Si c'est un while, l'adresse de fin est augmentée de 1 car on ajoute
+        // un jump qui fait partie du while.
+        sprintf(ti_addr, "%d", get_taille_ti());
+    
+        char * jmp = malloc(3);
+        sprintf(jmp, "%d", depiler_symbole(ts).initialise-1); // on dépile le tmp_while2
+        ajouter_instruction(ti, "JMP", jmp, "_", "_");
     }
-#line 1514 "y.tab.c"
+    // cas if
+    else {
+        sprintf(ti_addr, "%d", get_taille_ti()-1);
+    }
+    
+    strcpy(ti[jmp_index].arg2, ti_addr); // on met à jour le JMF
+    }
+#line 1532 "y.tab.c"
     break;
 
   case 32:
-#line 85 "rules.y"
+#line 102 "rules.y"
                          {
     char vartype[5];
     sprintf(vartype, "%d", (yyvsp[-1].nb));
-    ajouter_symbole(ts, (yyvsp[0].varchar), vartype, 1);
+    
+    // Si symbole existe déjà, lève warning
+    raise_redefinition_error(ts, (yyvsp[0].varchar));
+    
+    ajouter_symbole(ts, (yyvsp[0].varchar), vartype, 0);
 }
-#line 1524 "y.tab.c"
+#line 1546 "y.tab.c"
     break;
 
   case 33:
-#line 93 "rules.y"
+#line 114 "rules.y"
                                             {
 
     char * ro = depiler_addr(ts); 
     char vartype[5];
     sprintf(vartype, "%d", (yyvsp[-3].nb));
+    
+    // Si symbole existe déjà, lève warning
+    raise_redefinition_error(ts, (yyvsp[-2].varchar));
+    
     ajouter_symbole(ts, (yyvsp[-2].varchar), vartype, 1);
-    ajouter_instruction(ti, "COP", get_addr(ts, (yyvsp[-2].varchar)), ro, "_");
+    ajouter_instruction(ti, "COP", get_addr(ts, (yyvsp[-2].varchar), 0), ro, "_");
 }
-#line 1537 "y.tab.c"
+#line 1563 "y.tab.c"
     break;
 
   case 36:
-#line 104 "rules.y"
+#line 129 "rules.y"
                   {
     char * nb_char = malloc(3);
     sprintf(nb_char, "%d", (yyvsp[0].nb));
     ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "tmp", "tmp", 0), nb_char, "_");
 
 }
-#line 1548 "y.tab.c"
+#line 1574 "y.tab.c"
     break;
 
   case 37:
-#line 110 "rules.y"
+#line 135 "rules.y"
                   {
-    ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, (yyvsp[0].varchar)), "_");
+    
+    symbole s = get_symbole(ts, (yyvsp[0].varchar));
+    
+    if (s.initialise == 0) {
+        char * error = malloc(100);
+        sprintf(error, "[%d] ERROR: Variable <%s> has not been initialized.\n", lineno, s.nomVariable);
+        yyerror(error);
+    }
+    
+    char * addr = malloc(3);
+    sprintf(addr, "%d", get_taille_ts());
+    
+    ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), addr, "_");
 }
-#line 1556 "y.tab.c"
+#line 1594 "y.tab.c"
     break;
 
   case 38:
-#line 115 "rules.y"
+#line 152 "rules.y"
                                {
     char * arg2 = depiler_addr(ts);
     char * arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
     ajouter_instruction(ti, "SOU", arg1, "0", arg2);
 
 }
-#line 1567 "y.tab.c"
+#line 1605 "y.tab.c"
     break;
 
   case 39:
-#line 122 "rules.y"
+#line 159 "rules.y"
                                             {
     char * arg3 = depiler_addr(ts);
     char * arg2 = depiler_addr(ts);
@@ -1575,11 +1613,11 @@ yyreduce:
     ajouter_instruction(ti, "SOU", arg1, arg2, arg3);
 
 }
-#line 1579 "y.tab.c"
+#line 1617 "y.tab.c"
     break;
 
   case 40:
-#line 129 "rules.y"
+#line 166 "rules.y"
                                            {
     char * arg3 = depiler_addr(ts);
     char * arg2 = depiler_addr(ts);
@@ -1587,11 +1625,11 @@ yyreduce:
     ajouter_instruction(ti, "ADD", arg1, arg2, arg3);
 
 }
-#line 1591 "y.tab.c"
+#line 1629 "y.tab.c"
     break;
 
   case 41:
-#line 136 "rules.y"
+#line 173 "rules.y"
                                            {
     char * arg3 = depiler_addr(ts);
     char * arg2 = depiler_addr(ts);
@@ -1599,11 +1637,11 @@ yyreduce:
     ajouter_instruction(ti, "DIV", arg1, arg2, arg3);
 
 }
-#line 1603 "y.tab.c"
+#line 1641 "y.tab.c"
     break;
 
   case 42:
-#line 143 "rules.y"
+#line 180 "rules.y"
                                            {
     char * arg3 = depiler_addr(ts);
     char * arg2 = depiler_addr(ts);
@@ -1611,19 +1649,43 @@ yyreduce:
     ajouter_instruction(ti, "MUL", arg1, arg2, arg3);
 
 }
-#line 1615 "y.tab.c"
+#line 1653 "y.tab.c"
     break;
 
   case 43:
-#line 151 "rules.y"
+#line 188 "rules.y"
                                      {
-    ajouter_instruction(ti, "COP", get_addr(ts, (yyvsp[-2].varchar)), depiler_addr(ts), "_");
+    char * addr = get_addr(ts, (yyvsp[-2].varchar), 0);
+    ajouter_instruction(ti, "COP", addr, depiler_addr(ts), "_");
+    ts[strtol(addr, NULL, 10)].initialise = 1;
 }
-#line 1623 "y.tab.c"
+#line 1663 "y.tab.c"
+    break;
+
+  case 45:
+#line 195 "rules.y"
+                  {
+    ajouter_symbole(ts, "tmp_while2", "tmp", get_taille_ti());
+}
+#line 1671 "y.tab.c"
     break;
 
   case 46:
-#line 158 "rules.y"
+#line 197 "rules.y"
+               {
+    char * condition = depiler_addr(ts);
+    
+    // On l'appelle tmp_while pour pouvoir le différencier des tmp_if
+    // Un tmp_while est suivi d'un autre tmp_while (ya une boucle donc deux jump)
+    ajouter_symbole(ts, "tmp_while", "tmp", get_taille_ti());
+    
+    ajouter_instruction(ti, "JMF", condition, "-1", "_");
+}
+#line 1685 "y.tab.c"
+    break;
+
+  case 47:
+#line 207 "rules.y"
                             {
 
     char * condition = depiler_addr(ts);
@@ -1631,12 +1693,7 @@ yyreduce:
     // on dépile et remet juste après car besoin ensuite pour les elif/else
     // contient même adresse donc rien ne s'est passé du point de vue instruction
     char * result_end = ajouter_symbole(ts, "result_end", "tmp", 0);
-    ajouter_symbole(ts, "result_condition", "tmp", 0);
-    
-    // On supprime après chaque condition le result_condition en trop
-    // donc je garde le même patterne de sorte que la pile de symboles en sortie
-    // d'une else if et d'un if soient les même (1:tmp_if, 2:result_condition, 3:end)
-    // Le end d'un if est la condition du if.
+
     ajouter_instruction(ti, "COP", result_end, condition, "_");
     
     
@@ -1648,11 +1705,11 @@ yyreduce:
     // modifier l'adresse de ligne de retour -> dans le symbole tmp_if
     ajouter_instruction(ti, "JMF", condition, "-1", "_");
 }
-#line 1652 "y.tab.c"
+#line 1709 "y.tab.c"
     break;
 
-  case 47:
-#line 183 "rules.y"
+  case 48:
+#line 227 "rules.y"
                               {
 
     // Opération : !end && cond_elif
@@ -1673,8 +1730,6 @@ yyreduce:
     // On a besoin d'un tmp_if pour mettre à jour le pointeur
     // et on a besoin d'un end pour les prochains elif/else
     // Dès qu'on sort du else if on s'attend à avoir tmp_if donc c'est la dernière tmp à push
-    // Le result_condition est obsolète passé cette condition, donc on le met juste après le tmp_if
-    // pour pouvoir le dépiler après le tmp_if (et l'ignorer)
     // Il restera en haut de la pile le result_end qui est lui important par la suite
     char * result_end = ajouter_symbole(ts, "result_end", "tmp", 0);
     char * result_condition = ajouter_symbole(ts, "result_condition", "tmp", 0);
@@ -1684,30 +1739,30 @@ yyreduce:
     ajouter_instruction(ti, "NOT", result_not, end_addr, "_");
     depiler_addr(ts); // on dépile le result_not
     
+    // On a pas besoin de savoir si le else if précédent est vrai ou faux, juste de si
+    // un des else if précédent est vrai. Donc on a pas besoin de result_condition dans le futur
+    depiler_addr(ts); // On dépile result_condition
+    
     // on entre dans le if si (!end && elif) <-> (result_not && cond_addr_elif)
     ajouter_instruction(ti, "AND", result_condition, result_not, cond_addr_elif);
     
     
-    // On a pas besoin de savoir si le else if précédent est vrai ou faux, juste de si
-    // un des else if précédent est vrai. Donc on a pas besoin de result_condition dans le futur.
-    // On a envie de réaffecter sa valeur à celle de end qui est utile dans le futur,
-    // mais le JMF utilise result_condition. On ne peut pas assigner end après le JMF car cette
-    // opération permet de traiter les prochains else et doit être effectuée dans tous les cas.
-    // Donc on doit créer une variable end séparée. On ajoute le symbole juste avant condition.
+    
     ajouter_instruction(ti, "OR", result_end, result_condition, end_addr);
     
-    
-    ajouter_symbole(ts, "tmp_if", "tmp", get_taille_ti());
+    ajouter_symbole(ts, "tmp_if", "tmp", get_taille_ti()); //pointe vers l'instruction JMF
     
     // result_condition = !cond_addr_if && cond_addr_elif
     ajouter_instruction(ti, "JMF", result_condition, "-1", "_");
     
+    
+    
 }
-#line 1707 "y.tab.c"
+#line 1762 "y.tab.c"
     break;
 
-  case 48:
-#line 233 "rules.y"
+  case 49:
+#line 275 "rules.y"
                  {
 
     // on supprime la variable temporaire qui correspond à la condition
@@ -1717,32 +1772,34 @@ yyreduce:
     
     
     char * result_not = ajouter_symbole(ts, "tmp", "result_not", 0);
-    // sera dépilé en fin de else comme les result_condition
     
     ajouter_instruction(ti, "NOT", result_not, end_addr, "_");
+    depiler_addr(ts); //On dépile le result_not
     
     // result_condition = !end
     // si aucun if précédent n'est vrai, else passe
     // donc pas besoin de AND ce coup-ci
     
     ajouter_symbole(ts, "tmp_if", "tmp", get_taille_ti());
+    
+    
     ajouter_instruction(ti, "JMF", result_not, "-1", "_");
     
     
 }
-#line 1734 "y.tab.c"
-    break;
-
-  case 54:
-#line 260 "rules.y"
-          {
-    ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, (yyvsp[0].varchar)), "_");
-}
-#line 1742 "y.tab.c"
+#line 1791 "y.tab.c"
     break;
 
   case 55:
-#line 264 "rules.y"
+#line 304 "rules.y"
+          {
+    ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, (yyvsp[0].varchar), 0), "_");
+}
+#line 1799 "y.tab.c"
+    break;
+
+  case 56:
+#line 308 "rules.y"
                                                  {
     char * op1 = depiler_addr(ts);
     char * op2 = depiler_addr(ts);
@@ -1750,11 +1807,11 @@ yyreduce:
     char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
     ajouter_instruction(ti, "EQU", result_egal, op1, op2);
 }
-#line 1754 "y.tab.c"
+#line 1811 "y.tab.c"
     break;
 
-  case 56:
-#line 272 "rules.y"
+  case 57:
+#line 316 "rules.y"
                                             {
     char * op1 = depiler_addr(ts);
     char * op2 = depiler_addr(ts);
@@ -1762,11 +1819,11 @@ yyreduce:
     char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
     ajouter_instruction(ti, "INF", result_egal, op2, op1);
 }
-#line 1766 "y.tab.c"
+#line 1823 "y.tab.c"
     break;
 
-  case 57:
-#line 280 "rules.y"
+  case 58:
+#line 324 "rules.y"
                                             {
     char * op1 = depiler_addr(ts);
     char * op2 = depiler_addr(ts);
@@ -1774,11 +1831,11 @@ yyreduce:
     char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
     ajouter_instruction(ti, "SUP", result_egal, op2, op1);
 }
-#line 1778 "y.tab.c"
+#line 1835 "y.tab.c"
     break;
 
 
-#line 1782 "y.tab.c"
+#line 1839 "y.tab.c"
 
       default: break;
     }
@@ -2010,9 +2067,10 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 313 "rules.y"
+#line 357 "rules.y"
 
-void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
+void yyerror(char *s) { fprintf(stderr, "%s\n", s); free(s); exit(-1); }
+void yywarning(char *s) { printf("%s\n", s); }
 int main(void) {
   //yydebug=1;
   ts = init_ts();

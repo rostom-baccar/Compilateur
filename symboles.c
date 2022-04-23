@@ -6,6 +6,7 @@
 
 int taille = 0;
 int profondeurMAX = 0;
+extern int lineno;
 
 symbole* init_ts() {
     return malloc(TAILLE*sizeof(symbole*));
@@ -25,12 +26,14 @@ int get_taille_ts() {
 }
 
 void print_symbole(symbole s) {
-    printf("%s (%s, %d, %d) ", s.nomVariable, s.typeVariable, s.declare, s.profondeur);
+    printf("%s (%s, %d, %d) ", s.nomVariable, s.typeVariable, s.initialise, s.profondeur);
 }
 
 char * ajouter_symbole(symbole* tab, char* nom, char* type, int decl) {
-    if (taille >= TAILLE) printf("TAILLE MAXIMALE DEPASSEE\n");
-    symbole s = {declare:decl, profondeur:profondeurMAX};
+    if (taille >= TAILLE) {
+        yyerror("Débordement pile des symboles\n");
+    }
+    symbole s = {initialise:decl, profondeur:profondeurMAX};
     strcpy(s.nomVariable, nom);
     strcpy(s.typeVariable, type);
     tab[taille] = s;
@@ -71,7 +74,10 @@ symbole depiler_symbole(symbole* tab) {
 }
 
 
-char * get_addr(symbole* tab, char* nom) {
+
+// mode = 0 -> erreur si symbole inconnu
+// mode = 1 -> renvoie -1
+char * get_addr(symbole* tab, char* nom, int mode) {
     int i;
     for (i=0; i < taille; i++) {
         
@@ -82,12 +88,39 @@ char * get_addr(symbole* tab, char* nom) {
         }
     }
     
-    char * error = malloc(100);
-    sprintf(error, "ERROR: Unknown variable <%s>\n", nom);
-    yyerror(error);
-    free(error);
-    exit(-1);
+    if (mode == 0) {
+    
+        char * error = malloc(100);
+        sprintf(error, "[%d] ERROR: Unknown variable <%s>.\n", lineno, nom);
+        yyerror(error);
+    }
+    return "-1";
 }
+
+symbole get_symbole(symbole* tab, char* nom) {
+    int i;
+    for (i=0; i < taille; i++) {
+        
+        if (strcmp(tab[i].nomVariable, nom) == 0) {
+            return tab[i];
+        }
+    }
+    
+    char * error = malloc(100);
+    sprintf(error, "[%d] ERROR: Unknown variable <%s>.\n", lineno, nom);
+    yyerror(error);
+    exit(-1); // Inutile mais enlève le warning
+}
+
+
+void raise_redefinition_error(symbole * ts, char* name) {
+    if (strcmp(get_addr(ts, name, 1), "-1") != 0) {
+        char * error = malloc(100);
+        sprintf(error, "[%d] ERROR: Redefinition of <%s>.\n", lineno, name);
+        yyerror(error);
+    }
+}
+
 
 /*
  * Vérifie que le symbole donné est le bon.
@@ -106,22 +139,25 @@ char * depiler_verifier_symbole(symbole * ts, int errno) {
    
         case 0:
             if (!(strcmp(s.nomVariable, "result_end") == 0)) {
-                yyerror("ERROR: Unexpected statement before condition\n");
-                exit(-1);
+                char * error = malloc(100);
+                sprintf(error, "[%d] ERROR: Unexpected statement before condition.\n", lineno);
+                yyerror(error);
             }
             break;
         
         case 1:
             if (!(strcmp(s.nomVariable, "result_condition") == 0)) {
-                yyerror("ERROR: An unexpected error has occurred\n");
-                exit(-1);
+                char * error = malloc(100);
+                sprintf(error, "[%d] ERROR: An unexpected error has occurred.\n", lineno);
+                yyerror(error);
             }
             break;
    
         case 2:
             if (!(strcmp(s.nomVariable, "tmp_if") == 0)) {
-                yyerror("ERROR: An unexpected error has occurred\n");
-                exit(-1);
+                char * error = malloc(100);
+                sprintf(error, "[%d] ERROR: An unexpected error has occurred.\n", lineno);
+                yyerror(error);
             }
             break;
             

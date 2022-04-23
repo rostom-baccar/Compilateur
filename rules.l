@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "y.tab.h"
+int lineno = 1;
 %}
 
 %option noyywrap
@@ -10,7 +11,10 @@
 
 %%
 
-[ \t\n]+  {};
+
+[ \t]+  {};
+[\n]    {lineno++;}
+
 ","  {return tVIRG;}
 [0-9]+(e[0-9]+)? {
 	  yylval.nb = (int) strtold(yytext, NULL);
