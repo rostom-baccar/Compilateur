@@ -1,23 +1,17 @@
 int main() {
     
-    int a;
-    a = 1;
+    int a = 3;
     int i;
     i = 3;
     
-    if (i == a) {
-        i = a+4;
+    if (a < 3) {
+        a = a+4;
     }
-    int b;
-    else if (a == 1) {
+    else if (a > 3) {
         a = 2;
-        if (a == 2) {
-            printf(a);
-            a = 9;
-        }
     }
     else {
-        a = 0;
+        a = -1;
     }
     printf(a);
 }

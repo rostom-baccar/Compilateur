@@ -1,11 +1,11 @@
-errors custom
+--> declare c'est "est-ce qu'on y a mis une valeur
+
 
 
 --> ajouter OR, AND et NOT à ALU
 
 --> while
 
---> recopier le EGALEGAL pour les autres conditions simples
 
 
 
@@ -15,13 +15,6 @@ errors custom
 
 --> INFE et SUPE existent -> pas besoin compliquer la vie
 
---> peut pas faire int a = 0; (déclaration ou affectation mais pas les deux)
 
 --> implémenter ou logique pour INFEG et SUPEG
 
-
-
---> ça doit provoquer une erreur :
-if (a) {truc;}
-machin;
-else {bidule;}

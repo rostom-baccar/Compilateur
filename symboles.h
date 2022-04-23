@@ -7,6 +7,9 @@ typedef struct symbole {
     int profondeur;
 } symbole;
 
+void yyerror(char *s);
+char * depiler_verifier_symbole(symbole * ts, int errno);
+
 symbole* init_ts();
 
 void print_ts(symbole* tab);

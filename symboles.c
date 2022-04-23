@@ -81,8 +81,62 @@ char * get_addr(symbole* tab, char* nom) {
             return i_addr;
         }
     }
+    
+    char * error = malloc(100);
+    sprintf(error, "ERROR: Unknown variable <%s>\n", nom);
+    yyerror(error);
+    free(error);
+    exit(-1);
+}
 
-    return "-1";
+/*
+ * Vérifie que le symbole donné est le bon.
+ * On l'appelle juste après avoir dépilé 
+ * 0 -> result_end
+ * 1 -> result_condition
+ * 2 -> tmp_if
+*/
+char * depiler_verifier_symbole(symbole * ts, int errno) {
+   
+   symbole s = depiler_symbole(ts);
+   char * expected_name = malloc(20);
+   char * error = malloc(30);
+   
+   switch (errno) {
+   
+        case 0:
+            if (!(strcmp(s.nomVariable, "result_end") == 0)) {
+                yyerror("ERROR: Unexpected statement before condition\n");
+                exit(-1);
+            }
+            break;
+        
+        case 1:
+            if (!(strcmp(s.nomVariable, "result_condition") == 0)) {
+                yyerror("ERROR: An unexpected error has occurred\n");
+                exit(-1);
+            }
+            break;
+   
+        case 2:
+            if (!(strcmp(s.nomVariable, "tmp_if") == 0)) {
+                yyerror("ERROR: An unexpected error has occurred\n");
+                exit(-1);
+            }
+            break;
+            
+        default:
+            break;
+   }
+   
+   // Le symbole est correct, on renvoie son adresse
+   char * s_addr = malloc(3);
+   sprintf(s_addr, "%d", get_taille_ts());
+   
+   free(expected_name);
+   free(error);
+   
+   return s_addr;
 }
 
 

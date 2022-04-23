@@ -5,7 +5,6 @@
 #include "symboles.h"
 #include "instructions.h"
 int varchar[16];
-void yyerror(char *s);
 int yylex(); //fix warning
 
 symbole * ts;
@@ -89,6 +88,17 @@ Declaration: VarType tID {
     ajouter_symbole(ts, $2, vartype, 1);
 };
 
+// C'est techniquement VarType Affectation mais c'est plus simple comme ça
+// pour ajouter la variable.
+Declaration: VarType tID tEGAL RightOperand {
+
+    char * ro = depiler_addr(ts); 
+    char vartype[5];
+    sprintf(vartype, "%d", $1);
+    ajouter_symbole(ts, $2, vartype, 1);
+    ajouter_instruction(ti, "COP", get_addr(ts, $2), ro, "_");
+};
+
 RightOperand: FunCall ;
 RightOperand: Operations;
 RightOperand: tNB {
@@ -101,6 +111,13 @@ RightOperand: tID {
     ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1), "_");
 };
 
+// Nombre négatif
+Operations: tSOUS RightOperand {
+    char * arg2 = depiler_addr(ts);
+    char * arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
+    ajouter_instruction(ti, "SOU", arg1, "0", arg2);
+
+};
 
 Operations: RightOperand tSOUS RightOperand {
     char * arg3 = depiler_addr(ts);
@@ -173,9 +190,12 @@ Condition: tELIF ArgCondition {
     // End correspond à la variable "une condition précédente est vraie"
     
     char * cond_addr_elif = depiler_addr(ts); // condition du else if
-    char * end_addr = depiler_addr(ts); // si la chaine de condition est finie
     
-    yyerror("Unexpected line before else if\n");
+    // On dépile end pour voir si la chaine est finie
+    char * end_addr;
+    end_addr = depiler_verifier_symbole(ts, 0);
+    
+    
     
     // On a besoin d'un tmp_if pour mettre à jour le pointeur
     // et on a besoin d'un end pour les prochains elif/else
@@ -211,8 +231,12 @@ Condition: tELIF ArgCondition {
     
 };
 Condition: tELSE {
+
     // on supprime la variable temporaire qui correspond à la condition
-    char * end_addr = depiler_addr(ts);
+
+    char * end_addr;
+    end_addr = depiler_verifier_symbole(ts, 0);
+    
     
     char * result_not = ajouter_symbole(ts, "tmp", "result_not", 0);
     // sera dépilé en fin de else comme les result_condition
@@ -236,20 +260,6 @@ Bool: Comparaison;
 Bool: tID {
     ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1), "_");
 };
-/*
-Comparaison: RightOperand tINF RightOperand {
-    int arg2 = get_addr(ts, $1);
-    int arg3 = get_addr(ts, $3);
-    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
-    ajouter_instruction(ti, "INF", arg1, arg2, arg3);
-};
-Comparaison: RightOperand tSUP RightOperand {
-    int arg2 = get_addr(ts, $1);
-    int arg3 = get_addr(ts, $3);
-    int arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
-    ajouter_instruction(ti, "SUP", arg1, arg2, arg3);
-};
-*/
 
 Comparaison: RightOperand tEGALEGAL RightOperand {
     char * op1 = depiler_addr(ts);
@@ -258,6 +268,23 @@ Comparaison: RightOperand tEGALEGAL RightOperand {
     char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
     ajouter_instruction(ti, "EQU", result_egal, op1, op2);
 };
+
+Comparaison: RightOperand tINF RightOperand {
+    char * op1 = depiler_addr(ts);
+    char * op2 = depiler_addr(ts);
+    
+    char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
+    ajouter_instruction(ti, "INF", result_egal, op2, op1);
+};
+
+Comparaison: RightOperand tSUP RightOperand {
+    char * op1 = depiler_addr(ts);
+    char * op2 = depiler_addr(ts);
+    
+    char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
+    ajouter_instruction(ti, "SUP", result_egal, op2, op1);
+};
+
 
 /*
 Comparaison: RightOperand tINFEG RightOperand {
@@ -273,19 +300,15 @@ Comparaison: RightOperand tINFEG RightOperand {
     // donc on ignore le retour
     depiler_addr(ts); // c'est result_egal
     depiler_addr(ts); // c'est result_inf
-    int result_or = ajouter_symbole(ts, "tmp", "tmp", 0);
+    int result_or = ajouter_symbole(ts, "tmp", "tmp_condition", 0);
     
     ajouter_instruction(ti, "OR", result_or, result_egal, result_inf); 
     // A ou B = Non [ (Non A) et (Non B)]
     
     
-    int next = ajouter_symbole(ts, "next", "tmp_if", 0);
-
-    ajouter_instruction(ti, "JMF", result_or, next, 0);
 };
 */
-// pk il reste des tmp à la fin ?
-// traduire les comparaisons
+
 
 %%
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); }
@@ -298,7 +321,8 @@ int main(void) {
   // à chaque comparaison logique : EQU 14 14 0 -> @14 = (@14 == @0) où @0 contient 0
   // De même pour 1
   // UPDATE : ajouté OR, AND et NOT instructions pour enlever ce problème
-  //ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "zero", "int", 1), "0", "_");
+  // Mais quand même besoin d'un 0 pour les nombres négatifs
+  ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "zero", "int", 1), "0", "_");
   //ajouter_instruction(ti, "AFC", ajouter_symbole(ts, "one", "int", 1), "1", "_");
   
   
