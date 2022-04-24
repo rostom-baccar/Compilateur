@@ -5,21 +5,17 @@
 
 --> for
 
---> gérer commentaires ?
-
---> INFE et SUPE existent -> pas besoin compliquer la vie
-
 
 --> implémenter ou logique pour INFEG et SUPEG
 
 
-did-list
--> commentaires //
--> commentaires /* */ sur plusieurs lignes
--> modifié compteur de lignes par celui intégré de base dans flex yylineno
-(sinon impossible de faire le /* */ et compter les \n à la main)
--> débuggé le /* */ pendant environ 10 ans pour qu'il accept les /* * */ et les newline
--> très fier d'avoir compris cette abomination de regex finale
-
-
 \/\*(.|[\r\n])*?\*\/ <- pas greedy
+--> pas assez greedy ? un seul commentaire autorisé :)
+
+
+did-list
+-> réglé un problème ajouté hier (recherche addr symbole -> taille ts)
+-> transformé les comparaisons en opérations
+-> les if a acceptent maintenant tout ce qu'on veut (a == b == c < 4 && 1)
+-> j'ai l'impression d'avoir anticipé un bug de while mais peut-être que j'ai ai créé un
+

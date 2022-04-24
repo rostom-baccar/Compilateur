@@ -70,40 +70,41 @@ Grammaire
    39           | RightOperand tADD RightOperand
    40           | RightOperand tDIV RightOperand
    41           | RightOperand tMUL RightOperand
+   42           | RightOperand tAND RightOperand
+   43           | RightOperand tOR RightOperand
+   44           | RightOperand tEGALEGAL RightOperand
+   45           | RightOperand tINF RightOperand
+   46           | RightOperand tSUP RightOperand
 
-   42 Affectation: tID tEGAL RightOperand
+   47 Affectation: tID tEGAL RightOperand
 
-   43 Condition: tFOR ForCondition
+   48 Condition: tFOR ForCondition
 
-   44 $@2: %empty
+   49 $@2: %empty
 
-   45 Condition: tWHILE $@2 ArgCondition
-   46          | tIF ArgCondition
-   47          | tELIF ArgCondition
-   48          | tELSE
+   50 Condition: tWHILE $@2 ArgCondition
+   51          | tIF ArgCondition
+   52          | tELIF ArgCondition
+   53          | tELSE
 
-   49 ArgCondition: tPO Bool tPF
+   54 ArgCondition: tPO Bool tPF
 
-   50 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF
+   55 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF
 
-   51 DeclarationIndice: Affectation
-   52                  | tID
+   56 DeclarationIndice: Affectation
+   57                  | tID
 
-   53 Bool: Comparaison
-   54     | tID
-
-   55 Comparaison: RightOperand tEGALEGAL RightOperand
-   56            | RightOperand tINF RightOperand
-   57            | RightOperand tSUP RightOperand
+   58 Bool: Operations
+   59     | tID
 
 
 Terminaux, suivis des règles où ils apparaissent
 
     $end (0) 0
     error (256)
-    tEGAL (258) 32 42
-    tPO (259) 4 5 6 49 50
-    tPF (260) 4 5 6 49 50
+    tEGAL (258) 32 47
+    tPO (259) 4 5 6 54 55
+    tPF (260) 4 5 6 54 55
     tAO (261) 4 30
     tAF (262) 4 30
     tSOUS (263) 37 38
@@ -117,109 +118,108 @@ Terminaux, suivis des règles où ils apparaissent
     tSTR (271) 18
     tCONST (272) 15
     tVIRG (273) 9 13
-    tPVIRG (274) 26 27 28 50
-    tIF (275) 46
-    tWHILE (276) 45
-    tFOR (277) 43
-    tINF (278) 56
-    tSUP (279) 57
+    tPVIRG (274) 26 27 28 55
+    tIF (275) 51
+    tWHILE (276) 50
+    tFOR (277) 48
+    tINF (278) 45
+    tSUP (279) 46
     tINFEG (280)
     tSUPEG (281)
-    tEGALEGAL (282) 55
-    tELIF (283) 47
-    tELSE (284) 48
-    tNB <nb> (285) 35
-    tID <varchar> (286) 5 7 22 31 32 36 42 52 54
+    tEGALEGAL (282) 44
+    tELIF (283) 52
+    tELSE (284) 53
+    tAND (285) 42
+    tOR (286) 43
+    tNB <nb> (287) 35
+    tID <varchar> (288) 5 7 22 31 32 36 47 57 59
 
 
 Non-terminaux, suivis des règles où ils apparaissent
 
-    $accept (32)
+    $accept (34)
         à gauche: 0
-    Programme (33)
+    Programme (35)
         à gauche: 1
         à droite: 0
-    Funs (34)
+    Funs (36)
         à gauche: 2 3
         à droite: 1 3
-    Fun (35)
+    Fun (37)
         à gauche: 4
         à droite: 2 3
-    FunCall (36)
+    FunCall (38)
         à gauche: 5 6
         à droite: 26 33
-    DeclArgs (37)
+    DeclArgs (39)
         à gauche: 7 8
         à droite: 4 9
-    DeclArgNext (38)
+    DeclArgNext (40)
         à gauche: 9 10
         à droite: 7
-    CallArgs (39)
+    CallArgs (41)
         à gauche: 11 12
         à droite: 6 13
-    CallArgNext (40)
+    CallArgNext (42)
         à gauche: 13 14
         à droite: 11
-    PreType <nb> (41)
+    PreType <nb> (43)
         à gauche: 15 16
         à droite: 20
-    Type <nb> (42)
+    Type <nb> (44)
         à gauche: 17 18
         à droite: 19 20
-    FunType (43)
+    FunType (45)
         à gauche: 19
         à droite: 4
-    VarType <nb> (44)
+    VarType <nb> (46)
         à gauche: 20
         à droite: 7 31 32
-    FunName (45)
+    FunName (47)
         à gauche: 21 22
         à droite: 4 6
-    Body (46)
+    Body (48)
         à gauche: 23
         à droite: 4 30
-    Lignes (47)
+    Lignes (49)
         à gauche: 24 25
         à droite: 23 24
-    Ligne (48)
+    Ligne (50)
         à gauche: 26 27 28 30
         à droite: 24
-    $@1 (49)
+    $@1 (51)
         à gauche: 29
         à droite: 30
-    Declaration (50)
+    Declaration (52)
         à gauche: 31 32
         à droite: 27
-    RightOperand (51)
+    RightOperand (53)
         à gauche: 33 34 35 36
-        à droite: 11 32 37 38 39 40 41 42 55 56 57
-    Operations (52)
-        à gauche: 37 38 39 40 41
-        à droite: 34
-    Affectation (53)
-        à gauche: 42
-        à droite: 28 50 51
-    Condition (54)
-        à gauche: 43 45 46 47 48
+        à droite: 11 32 37 38 39 40 41 42 43 44 45 46 47
+    Operations (54)
+        à gauche: 37 38 39 40 41 42 43 44 45 46
+        à droite: 34 58
+    Affectation (55)
+        à gauche: 47
+        à droite: 28 55 56
+    Condition (56)
+        à gauche: 48 50 51 52 53
         à droite: 30
-    $@2 (55)
-        à gauche: 44
-        à droite: 45
-    ArgCondition (56)
+    $@2 (57)
         à gauche: 49
-        à droite: 45 46 47
-    ForCondition (57)
-        à gauche: 50
-        à droite: 43
-    DeclarationIndice (58)
-        à gauche: 51 52
         à droite: 50
-    Bool (59)
-        à gauche: 53 54
-        à droite: 49 50
-    Comparaison (60)
-        à gauche: 55 56 57
-        à droite: 53
+    ArgCondition (58)
+        à gauche: 54
+        à droite: 50 51 52
+    ForCondition (59)
+        à gauche: 55
+        à droite: 48
+    DeclarationIndice (60)
+        à gauche: 56 57
+        à droite: 55
+    Bool (61)
+        à gauche: 58 59
+        à droite: 54 55
 
 
 État 0
@@ -461,7 +461,7 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 25
 
-   46 Condition: tIF . ArgCondition
+   51 Condition: tIF . ArgCondition
 
     tPO  décalage et aller à l'état 42
 
@@ -470,16 +470,16 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 26
 
-   45 Condition: tWHILE . $@2 ArgCondition
+   50 Condition: tWHILE . $@2 ArgCondition
 
-    $défaut  réduction par utilisation de la règle 44 ($@2)
+    $défaut  réduction par utilisation de la règle 49 ($@2)
 
     $@2  aller à l'état 44
 
 
 État 27
 
-   43 Condition: tFOR . ForCondition
+   48 Condition: tFOR . ForCondition
 
     tPO  décalage et aller à l'état 45
 
@@ -488,7 +488,7 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 28
 
-   47 Condition: tELIF . ArgCondition
+   52 Condition: tELIF . ArgCondition
 
     tPO  décalage et aller à l'état 42
 
@@ -497,15 +497,15 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 29
 
-   48 Condition: tELSE .
+   53 Condition: tELSE .
 
-    $défaut  réduction par utilisation de la règle 48 (Condition)
+    $défaut  réduction par utilisation de la règle 53 (Condition)
 
 
 État 30
 
    22 FunName: tID .
-   42 Affectation: tID . tEGAL RightOperand
+   47 Affectation: tID . tEGAL RightOperand
 
     tEGAL  décalage et aller à l'état 48
 
@@ -613,7 +613,7 @@ Non-terminaux, suivis des règles où ils apparaissent
 
 État 42
 
-   49 ArgCondition: tPO . Bool tPF
+   54 ArgCondition: tPO . Bool tPF
 
     tSOUS    décalage et aller à l'état 58
     tPRINTF  décalage et aller à l'état 24
@@ -626,63 +626,62 @@ Non-terminaux, suivis des règles où ils apparaissent
     RightOperand  aller à l'état 62
     Operations    aller à l'état 63
     Bool          aller à l'état 64
-    Comparaison   aller à l'état 65
 
 
 État 43
 
-   46 Condition: tIF ArgCondition .
+   51 Condition: tIF ArgCondition .
 
-    $défaut  réduction par utilisation de la règle 46 (Condition)
+    $défaut  réduction par utilisation de la règle 51 (Condition)
 
 
 État 44
 
-   45 Condition: tWHILE $@2 . ArgCondition
+   50 Condition: tWHILE $@2 . ArgCondition
 
     tPO  décalage et aller à l'état 42
 
-    ArgCondition  aller à l'état 66
+    ArgCondition  aller à l'état 65
 
 
 État 45
 
-   50 ForCondition: tPO . DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF
+   55 ForCondition: tPO . DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF
 
-    tID  décalage et aller à l'état 67
+    tID  décalage et aller à l'état 66
 
-    Affectation        aller à l'état 68
-    DeclarationIndice  aller à l'état 69
+    Affectation        aller à l'état 67
+    DeclarationIndice  aller à l'état 68
 
 
 État 46
 
-   43 Condition: tFOR ForCondition .
+   48 Condition: tFOR ForCondition .
 
-    $défaut  réduction par utilisation de la règle 43 (Condition)
+    $défaut  réduction par utilisation de la règle 48 (Condition)
 
 
 État 47
 
-   47 Condition: tELIF ArgCondition .
+   52 Condition: tELIF ArgCondition .
 
-    $défaut  réduction par utilisation de la règle 47 (Condition)
+    $défaut  réduction par utilisation de la règle 52 (Condition)
 
 
 État 48
 
-   42 Affectation: tID tEGAL . RightOperand
+   47 Affectation: tID tEGAL . RightOperand
 
     tSOUS    décalage et aller à l'état 58
     tPRINTF  décalage et aller à l'état 24
     tMAIN    décalage et aller à l'état 10
     tNB      décalage et aller à l'état 59
-    tID      décalage et aller à l'état 70
+    tID      décalage et aller à l'état 69
 
     FunCall       aller à l'état 61
     FunName       aller à l'état 33
-    RightOperand  aller à l'état 71
-    Operations    aller à l'état 63
+    RightOperand  aller à l'état 70
+    Operations    aller à l'état 71
 
 
 État 49
@@ -710,7 +709,7 @@ Non-terminaux, suivis des règles où ils apparaissent
     tPRINTF  décalage et aller à l'état 24
     tMAIN    décalage et aller à l'état 10
     tNB      décalage et aller à l'état 59
-    tID      décalage et aller à l'état 70
+    tID      décalage et aller à l'état 69
 
     $défaut  réduction par utilisation de la règle 12 (CallArgs)
 
@@ -718,7 +717,7 @@ Non-terminaux, suivis des règles où ils apparaissent
     CallArgs      aller à l'état 73
     FunName       aller à l'état 33
     RightOperand  aller à l'état 74
-    Operations    aller à l'état 63
+    Operations    aller à l'état 71
 
 
 État 52
@@ -773,12 +772,12 @@ Non-terminaux, suivis des règles où ils apparaissent
     tPRINTF  décalage et aller à l'état 24
     tMAIN    décalage et aller à l'état 10
     tNB      décalage et aller à l'état 59
-    tID      décalage et aller à l'état 70
+    tID      décalage et aller à l'état 69
 
     FunCall       aller à l'état 61
     FunName       aller à l'état 33
     RightOperand  aller à l'état 77
-    Operations    aller à l'état 63
+    Operations    aller à l'état 71
 
 
 État 59
@@ -792,11 +791,11 @@ Non-terminaux, suivis des règles où ils apparaissent
 
    22 FunName: tID .
    36 RightOperand: tID .
-   54 Bool: tID .
+   59 Bool: tID .
 
     tPO       réduction par utilisation de la règle 22 (FunName)
-    tPF       réduction par utilisation de la règle 54 (Bool)
-    tPVIRG    réduction par utilisation de la règle 54 (Bool)
+    tPF       réduction par utilisation de la règle 59 (Bool)
+    tPVIRG    réduction par utilisation de la règle 59 (Bool)
     $défaut  réduction par utilisation de la règle 36 (RightOperand)
 
 
@@ -813,9 +812,11 @@ Non-terminaux, suivis des règles où ils apparaissent
    39           | RightOperand . tADD RightOperand
    40           | RightOperand . tDIV RightOperand
    41           | RightOperand . tMUL RightOperand
-   55 Comparaison: RightOperand . tEGALEGAL RightOperand
-   56            | RightOperand . tINF RightOperand
-   57            | RightOperand . tSUP RightOperand
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
 
     tSOUS      décalage et aller à l'état 78
     tADD       décalage et aller à l'état 79
@@ -824,61 +825,59 @@ Non-terminaux, suivis des règles où ils apparaissent
     tINF       décalage et aller à l'état 82
     tSUP       décalage et aller à l'état 83
     tEGALEGAL  décalage et aller à l'état 84
+    tAND       décalage et aller à l'état 85
+    tOR        décalage et aller à l'état 86
 
 
 État 63
 
    34 RightOperand: Operations .
+   58 Bool: Operations .
 
+    tPF       réduction par utilisation de la règle 58 (Bool)
+    tPVIRG    réduction par utilisation de la règle 58 (Bool)
     $défaut  réduction par utilisation de la règle 34 (RightOperand)
 
 
 État 64
 
-   49 ArgCondition: tPO Bool . tPF
+   54 ArgCondition: tPO Bool . tPF
 
-    tPF  décalage et aller à l'état 85
+    tPF  décalage et aller à l'état 87
 
 
 État 65
 
-   53 Bool: Comparaison .
+   50 Condition: tWHILE $@2 ArgCondition .
 
-    $défaut  réduction par utilisation de la règle 53 (Bool)
+    $défaut  réduction par utilisation de la règle 50 (Condition)
 
 
 État 66
 
-   45 Condition: tWHILE $@2 ArgCondition .
+   47 Affectation: tID . tEGAL RightOperand
+   57 DeclarationIndice: tID .
 
-    $défaut  réduction par utilisation de la règle 45 (Condition)
+    tEGAL  décalage et aller à l'état 48
+
+    $défaut  réduction par utilisation de la règle 57 (DeclarationIndice)
 
 
 État 67
 
-   42 Affectation: tID . tEGAL RightOperand
-   52 DeclarationIndice: tID .
+   56 DeclarationIndice: Affectation .
 
-    tEGAL  décalage et aller à l'état 48
-
-    $défaut  réduction par utilisation de la règle 52 (DeclarationIndice)
+    $défaut  réduction par utilisation de la règle 56 (DeclarationIndice)
 
 
 État 68
 
-   51 DeclarationIndice: Affectation .
+   55 ForCondition: tPO DeclarationIndice . tPVIRG Bool tPVIRG Affectation tPF
 
-    $défaut  réduction par utilisation de la règle 51 (DeclarationIndice)
+    tPVIRG  décalage et aller à l'état 88
 
 
 État 69
-
-   50 ForCondition: tPO DeclarationIndice . tPVIRG Bool tPVIRG Affectation tPF
-
-    tPVIRG  décalage et aller à l'état 86
-
-
-État 70
 
    22 FunName: tID .
    36 RightOperand: tID .
@@ -887,20 +886,37 @@ Non-terminaux, suivis des règles où ils apparaissent
     $défaut  réduction par utilisation de la règle 36 (RightOperand)
 
 
-État 71
+État 70
 
    38 Operations: RightOperand . tSOUS RightOperand
    39           | RightOperand . tADD RightOperand
    40           | RightOperand . tDIV RightOperand
    41           | RightOperand . tMUL RightOperand
-   42 Affectation: tID tEGAL RightOperand .
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
+   47 Affectation: tID tEGAL RightOperand .
 
-    tSOUS  décalage et aller à l'état 78
-    tADD   décalage et aller à l'état 79
-    tDIV   décalage et aller à l'état 80
-    tMUL   décalage et aller à l'état 81
+    tSOUS      décalage et aller à l'état 78
+    tADD       décalage et aller à l'état 79
+    tDIV       décalage et aller à l'état 80
+    tMUL       décalage et aller à l'état 81
+    tINF       décalage et aller à l'état 82
+    tSUP       décalage et aller à l'état 83
+    tEGALEGAL  décalage et aller à l'état 84
+    tAND       décalage et aller à l'état 85
+    tOR        décalage et aller à l'état 86
 
-    $défaut  réduction par utilisation de la règle 42 (Affectation)
+    $défaut  réduction par utilisation de la règle 47 (Affectation)
+
+
+État 71
+
+   34 RightOperand: Operations .
+
+    $défaut  réduction par utilisation de la règle 34 (RightOperand)
 
 
 État 72
@@ -911,19 +927,19 @@ Non-terminaux, suivis des règles où ils apparaissent
     tPRINTF  décalage et aller à l'état 24
     tMAIN    décalage et aller à l'état 10
     tNB      décalage et aller à l'état 59
-    tID      décalage et aller à l'état 70
+    tID      décalage et aller à l'état 69
 
     FunCall       aller à l'état 61
     FunName       aller à l'état 33
-    RightOperand  aller à l'état 87
-    Operations    aller à l'état 63
+    RightOperand  aller à l'état 89
+    Operations    aller à l'état 71
 
 
 État 73
 
     6 FunCall: FunName tPO CallArgs . tPF
 
-    tPF  décalage et aller à l'état 88
+    tPF  décalage et aller à l'état 90
 
 
 État 74
@@ -933,16 +949,26 @@ Non-terminaux, suivis des règles où ils apparaissent
    39           | RightOperand . tADD RightOperand
    40           | RightOperand . tDIV RightOperand
    41           | RightOperand . tMUL RightOperand
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
 
-    tSOUS  décalage et aller à l'état 78
-    tADD   décalage et aller à l'état 79
-    tDIV   décalage et aller à l'état 80
-    tMUL   décalage et aller à l'état 81
-    tVIRG  décalage et aller à l'état 89
+    tSOUS      décalage et aller à l'état 78
+    tADD       décalage et aller à l'état 79
+    tDIV       décalage et aller à l'état 80
+    tMUL       décalage et aller à l'état 81
+    tVIRG      décalage et aller à l'état 91
+    tINF       décalage et aller à l'état 82
+    tSUP       décalage et aller à l'état 83
+    tEGALEGAL  décalage et aller à l'état 84
+    tAND       décalage et aller à l'état 85
+    tOR        décalage et aller à l'état 86
 
     $défaut  réduction par utilisation de la règle 14 (CallArgNext)
 
-    CallArgNext  aller à l'état 90
+    CallArgNext  aller à l'état 92
 
 
 État 75
@@ -966,7 +992,7 @@ Non-terminaux, suivis des règles où ils apparaissent
     PreType      aller à l'état 16
     VarType      aller à l'état 32
     FunName      aller à l'état 33
-    Body         aller à l'état 91
+    Body         aller à l'état 93
     Lignes       aller à l'état 35
     Ligne        aller à l'état 36
     Declaration  aller à l'état 37
@@ -988,9 +1014,17 @@ Non-terminaux, suivis des règles où ils apparaissent
    39           | RightOperand . tADD RightOperand
    40           | RightOperand . tDIV RightOperand
    41           | RightOperand . tMUL RightOperand
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
 
-    tDIV  décalage et aller à l'état 80
-    tMUL  décalage et aller à l'état 81
+    tINF       décalage et aller à l'état 82
+    tSUP       décalage et aller à l'état 83
+    tEGALEGAL  décalage et aller à l'état 84
+    tAND       décalage et aller à l'état 85
+    tOR        décalage et aller à l'état 86
 
     $défaut  réduction par utilisation de la règle 37 (Operations)
 
@@ -1003,12 +1037,12 @@ Non-terminaux, suivis des règles où ils apparaissent
     tPRINTF  décalage et aller à l'état 24
     tMAIN    décalage et aller à l'état 10
     tNB      décalage et aller à l'état 59
-    tID      décalage et aller à l'état 70
+    tID      décalage et aller à l'état 69
 
     FunCall       aller à l'état 61
     FunName       aller à l'état 33
-    RightOperand  aller à l'état 92
-    Operations    aller à l'état 63
+    RightOperand  aller à l'état 94
+    Operations    aller à l'état 71
 
 
 État 79
@@ -1019,12 +1053,12 @@ Non-terminaux, suivis des règles où ils apparaissent
     tPRINTF  décalage et aller à l'état 24
     tMAIN    décalage et aller à l'état 10
     tNB      décalage et aller à l'état 59
-    tID      décalage et aller à l'état 70
+    tID      décalage et aller à l'état 69
 
     FunCall       aller à l'état 61
     FunName       aller à l'état 33
-    RightOperand  aller à l'état 93
-    Operations    aller à l'état 63
+    RightOperand  aller à l'état 95
+    Operations    aller à l'état 71
 
 
 État 80
@@ -1035,12 +1069,12 @@ Non-terminaux, suivis des règles où ils apparaissent
     tPRINTF  décalage et aller à l'état 24
     tMAIN    décalage et aller à l'état 10
     tNB      décalage et aller à l'état 59
-    tID      décalage et aller à l'état 70
+    tID      décalage et aller à l'état 69
 
     FunCall       aller à l'état 61
     FunName       aller à l'état 33
-    RightOperand  aller à l'état 94
-    Operations    aller à l'état 63
+    RightOperand  aller à l'état 96
+    Operations    aller à l'état 71
 
 
 État 81
@@ -1051,72 +1085,104 @@ Non-terminaux, suivis des règles où ils apparaissent
     tPRINTF  décalage et aller à l'état 24
     tMAIN    décalage et aller à l'état 10
     tNB      décalage et aller à l'état 59
-    tID      décalage et aller à l'état 70
-
-    FunCall       aller à l'état 61
-    FunName       aller à l'état 33
-    RightOperand  aller à l'état 95
-    Operations    aller à l'état 63
-
-
-État 82
-
-   56 Comparaison: RightOperand tINF . RightOperand
-
-    tSOUS    décalage et aller à l'état 58
-    tPRINTF  décalage et aller à l'état 24
-    tMAIN    décalage et aller à l'état 10
-    tNB      décalage et aller à l'état 59
-    tID      décalage et aller à l'état 70
-
-    FunCall       aller à l'état 61
-    FunName       aller à l'état 33
-    RightOperand  aller à l'état 96
-    Operations    aller à l'état 63
-
-
-État 83
-
-   57 Comparaison: RightOperand tSUP . RightOperand
-
-    tSOUS    décalage et aller à l'état 58
-    tPRINTF  décalage et aller à l'état 24
-    tMAIN    décalage et aller à l'état 10
-    tNB      décalage et aller à l'état 59
-    tID      décalage et aller à l'état 70
+    tID      décalage et aller à l'état 69
 
     FunCall       aller à l'état 61
     FunName       aller à l'état 33
     RightOperand  aller à l'état 97
-    Operations    aller à l'état 63
+    Operations    aller à l'état 71
 
 
-État 84
+État 82
 
-   55 Comparaison: RightOperand tEGALEGAL . RightOperand
+   45 Operations: RightOperand tINF . RightOperand
 
     tSOUS    décalage et aller à l'état 58
     tPRINTF  décalage et aller à l'état 24
     tMAIN    décalage et aller à l'état 10
     tNB      décalage et aller à l'état 59
-    tID      décalage et aller à l'état 70
+    tID      décalage et aller à l'état 69
 
     FunCall       aller à l'état 61
     FunName       aller à l'état 33
     RightOperand  aller à l'état 98
-    Operations    aller à l'état 63
+    Operations    aller à l'état 71
+
+
+État 83
+
+   46 Operations: RightOperand tSUP . RightOperand
+
+    tSOUS    décalage et aller à l'état 58
+    tPRINTF  décalage et aller à l'état 24
+    tMAIN    décalage et aller à l'état 10
+    tNB      décalage et aller à l'état 59
+    tID      décalage et aller à l'état 69
+
+    FunCall       aller à l'état 61
+    FunName       aller à l'état 33
+    RightOperand  aller à l'état 99
+    Operations    aller à l'état 71
+
+
+État 84
+
+   44 Operations: RightOperand tEGALEGAL . RightOperand
+
+    tSOUS    décalage et aller à l'état 58
+    tPRINTF  décalage et aller à l'état 24
+    tMAIN    décalage et aller à l'état 10
+    tNB      décalage et aller à l'état 59
+    tID      décalage et aller à l'état 69
+
+    FunCall       aller à l'état 61
+    FunName       aller à l'état 33
+    RightOperand  aller à l'état 100
+    Operations    aller à l'état 71
 
 
 État 85
 
-   49 ArgCondition: tPO Bool tPF .
+   42 Operations: RightOperand tAND . RightOperand
 
-    $défaut  réduction par utilisation de la règle 49 (ArgCondition)
+    tSOUS    décalage et aller à l'état 58
+    tPRINTF  décalage et aller à l'état 24
+    tMAIN    décalage et aller à l'état 10
+    tNB      décalage et aller à l'état 59
+    tID      décalage et aller à l'état 69
+
+    FunCall       aller à l'état 61
+    FunName       aller à l'état 33
+    RightOperand  aller à l'état 101
+    Operations    aller à l'état 71
 
 
 État 86
 
-   50 ForCondition: tPO DeclarationIndice tPVIRG . Bool tPVIRG Affectation tPF
+   43 Operations: RightOperand tOR . RightOperand
+
+    tSOUS    décalage et aller à l'état 58
+    tPRINTF  décalage et aller à l'état 24
+    tMAIN    décalage et aller à l'état 10
+    tNB      décalage et aller à l'état 59
+    tID      décalage et aller à l'état 69
+
+    FunCall       aller à l'état 61
+    FunName       aller à l'état 33
+    RightOperand  aller à l'état 102
+    Operations    aller à l'état 71
+
+
+État 87
+
+   54 ArgCondition: tPO Bool tPF .
+
+    $défaut  réduction par utilisation de la règle 54 (ArgCondition)
+
+
+État 88
+
+   55 ForCondition: tPO DeclarationIndice tPVIRG . Bool tPVIRG Affectation tPF
 
     tSOUS    décalage et aller à l'état 58
     tPRINTF  décalage et aller à l'état 24
@@ -1128,34 +1194,43 @@ Non-terminaux, suivis des règles où ils apparaissent
     FunName       aller à l'état 33
     RightOperand  aller à l'état 62
     Operations    aller à l'état 63
-    Bool          aller à l'état 99
-    Comparaison   aller à l'état 65
+    Bool          aller à l'état 103
 
 
-État 87
+État 89
 
    32 Declaration: VarType tID tEGAL RightOperand .
    38 Operations: RightOperand . tSOUS RightOperand
    39           | RightOperand . tADD RightOperand
    40           | RightOperand . tDIV RightOperand
    41           | RightOperand . tMUL RightOperand
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
 
-    tSOUS  décalage et aller à l'état 78
-    tADD   décalage et aller à l'état 79
-    tDIV   décalage et aller à l'état 80
-    tMUL   décalage et aller à l'état 81
+    tSOUS      décalage et aller à l'état 78
+    tADD       décalage et aller à l'état 79
+    tDIV       décalage et aller à l'état 80
+    tMUL       décalage et aller à l'état 81
+    tINF       décalage et aller à l'état 82
+    tSUP       décalage et aller à l'état 83
+    tEGALEGAL  décalage et aller à l'état 84
+    tAND       décalage et aller à l'état 85
+    tOR        décalage et aller à l'état 86
 
     $défaut  réduction par utilisation de la règle 32 (Declaration)
 
 
-État 88
+État 90
 
     6 FunCall: FunName tPO CallArgs tPF .
 
     $défaut  réduction par utilisation de la règle 6 (FunCall)
 
 
-État 89
+État 91
 
    13 CallArgNext: tVIRG . CallArgs
 
@@ -1163,79 +1238,73 @@ Non-terminaux, suivis des règles où ils apparaissent
     tPRINTF  décalage et aller à l'état 24
     tMAIN    décalage et aller à l'état 10
     tNB      décalage et aller à l'état 59
-    tID      décalage et aller à l'état 70
+    tID      décalage et aller à l'état 69
 
     $défaut  réduction par utilisation de la règle 12 (CallArgs)
 
     FunCall       aller à l'état 61
-    CallArgs      aller à l'état 100
+    CallArgs      aller à l'état 104
     FunName       aller à l'état 33
     RightOperand  aller à l'état 74
-    Operations    aller à l'état 63
+    Operations    aller à l'état 71
 
 
-État 90
+État 92
 
    11 CallArgs: RightOperand CallArgNext .
 
     $défaut  réduction par utilisation de la règle 11 (CallArgs)
 
 
-État 91
+État 93
 
    30 Ligne: Condition tAO $@1 Body . tAF
 
-    tAF  décalage et aller à l'état 101
+    tAF  décalage et aller à l'état 105
 
 
-État 92
+État 94
 
    38 Operations: RightOperand . tSOUS RightOperand
    38           | RightOperand tSOUS RightOperand .
    39           | RightOperand . tADD RightOperand
    40           | RightOperand . tDIV RightOperand
    41           | RightOperand . tMUL RightOperand
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
 
-    tDIV  décalage et aller à l'état 80
-    tMUL  décalage et aller à l'état 81
+    tINF       décalage et aller à l'état 82
+    tSUP       décalage et aller à l'état 83
+    tEGALEGAL  décalage et aller à l'état 84
+    tAND       décalage et aller à l'état 85
+    tOR        décalage et aller à l'état 86
 
     $défaut  réduction par utilisation de la règle 38 (Operations)
-
-
-État 93
-
-   38 Operations: RightOperand . tSOUS RightOperand
-   39           | RightOperand . tADD RightOperand
-   39           | RightOperand tADD RightOperand .
-   40           | RightOperand . tDIV RightOperand
-   41           | RightOperand . tMUL RightOperand
-
-    tDIV  décalage et aller à l'état 80
-    tMUL  décalage et aller à l'état 81
-
-    $défaut  réduction par utilisation de la règle 39 (Operations)
-
-
-État 94
-
-   38 Operations: RightOperand . tSOUS RightOperand
-   39           | RightOperand . tADD RightOperand
-   40           | RightOperand . tDIV RightOperand
-   40           | RightOperand tDIV RightOperand .
-   41           | RightOperand . tMUL RightOperand
-
-    $défaut  réduction par utilisation de la règle 40 (Operations)
 
 
 État 95
 
    38 Operations: RightOperand . tSOUS RightOperand
    39           | RightOperand . tADD RightOperand
+   39           | RightOperand tADD RightOperand .
    40           | RightOperand . tDIV RightOperand
    41           | RightOperand . tMUL RightOperand
-   41           | RightOperand tMUL RightOperand .
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
 
-    $défaut  réduction par utilisation de la règle 41 (Operations)
+    tINF       décalage et aller à l'état 82
+    tSUP       décalage et aller à l'état 83
+    tEGALEGAL  décalage et aller à l'état 84
+    tAND       décalage et aller à l'état 85
+    tOR        décalage et aller à l'état 86
+
+    $défaut  réduction par utilisation de la règle 39 (Operations)
 
 
 État 96
@@ -1243,15 +1312,21 @@ Non-terminaux, suivis des règles où ils apparaissent
    38 Operations: RightOperand . tSOUS RightOperand
    39           | RightOperand . tADD RightOperand
    40           | RightOperand . tDIV RightOperand
+   40           | RightOperand tDIV RightOperand .
    41           | RightOperand . tMUL RightOperand
-   56 Comparaison: RightOperand tINF RightOperand .
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
 
-    tSOUS  décalage et aller à l'état 78
-    tADD   décalage et aller à l'état 79
-    tDIV   décalage et aller à l'état 80
-    tMUL   décalage et aller à l'état 81
+    tINF       décalage et aller à l'état 82
+    tSUP       décalage et aller à l'état 83
+    tEGALEGAL  décalage et aller à l'état 84
+    tAND       décalage et aller à l'état 85
+    tOR        décalage et aller à l'état 86
 
-    $défaut  réduction par utilisation de la règle 56 (Comparaison)
+    $défaut  réduction par utilisation de la règle 40 (Operations)
 
 
 État 97
@@ -1260,14 +1335,20 @@ Non-terminaux, suivis des règles où ils apparaissent
    39           | RightOperand . tADD RightOperand
    40           | RightOperand . tDIV RightOperand
    41           | RightOperand . tMUL RightOperand
-   57 Comparaison: RightOperand tSUP RightOperand .
+   41           | RightOperand tMUL RightOperand .
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
 
-    tSOUS  décalage et aller à l'état 78
-    tADD   décalage et aller à l'état 79
-    tDIV   décalage et aller à l'état 80
-    tMUL   décalage et aller à l'état 81
+    tINF       décalage et aller à l'état 82
+    tSUP       décalage et aller à l'état 83
+    tEGALEGAL  décalage et aller à l'état 84
+    tAND       décalage et aller à l'état 85
+    tOR        décalage et aller à l'état 86
 
-    $défaut  réduction par utilisation de la règle 57 (Comparaison)
+    $défaut  réduction par utilisation de la règle 41 (Operations)
 
 
 État 98
@@ -1276,62 +1357,134 @@ Non-terminaux, suivis des règles où ils apparaissent
    39           | RightOperand . tADD RightOperand
    40           | RightOperand . tDIV RightOperand
    41           | RightOperand . tMUL RightOperand
-   55 Comparaison: RightOperand tEGALEGAL RightOperand .
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   45           | RightOperand tINF RightOperand .
+   46           | RightOperand . tSUP RightOperand
 
-    tSOUS  décalage et aller à l'état 78
-    tADD   décalage et aller à l'état 79
-    tDIV   décalage et aller à l'état 80
-    tMUL   décalage et aller à l'état 81
-
-    $défaut  réduction par utilisation de la règle 55 (Comparaison)
+    $défaut  réduction par utilisation de la règle 45 (Operations)
 
 
 État 99
 
-   50 ForCondition: tPO DeclarationIndice tPVIRG Bool . tPVIRG Affectation tPF
+   38 Operations: RightOperand . tSOUS RightOperand
+   39           | RightOperand . tADD RightOperand
+   40           | RightOperand . tDIV RightOperand
+   41           | RightOperand . tMUL RightOperand
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
+   46           | RightOperand tSUP RightOperand .
 
-    tPVIRG  décalage et aller à l'état 102
+    $défaut  réduction par utilisation de la règle 46 (Operations)
 
 
 État 100
+
+   38 Operations: RightOperand . tSOUS RightOperand
+   39           | RightOperand . tADD RightOperand
+   40           | RightOperand . tDIV RightOperand
+   41           | RightOperand . tMUL RightOperand
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   44           | RightOperand tEGALEGAL RightOperand .
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
+
+    $défaut  réduction par utilisation de la règle 44 (Operations)
+
+
+État 101
+
+   38 Operations: RightOperand . tSOUS RightOperand
+   39           | RightOperand . tADD RightOperand
+   40           | RightOperand . tDIV RightOperand
+   41           | RightOperand . tMUL RightOperand
+   42           | RightOperand . tAND RightOperand
+   42           | RightOperand tAND RightOperand .
+   43           | RightOperand . tOR RightOperand
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
+
+    tINF       décalage et aller à l'état 82
+    tSUP       décalage et aller à l'état 83
+    tEGALEGAL  décalage et aller à l'état 84
+
+    $défaut  réduction par utilisation de la règle 42 (Operations)
+
+
+État 102
+
+   38 Operations: RightOperand . tSOUS RightOperand
+   39           | RightOperand . tADD RightOperand
+   40           | RightOperand . tDIV RightOperand
+   41           | RightOperand . tMUL RightOperand
+   42           | RightOperand . tAND RightOperand
+   43           | RightOperand . tOR RightOperand
+   43           | RightOperand tOR RightOperand .
+   44           | RightOperand . tEGALEGAL RightOperand
+   45           | RightOperand . tINF RightOperand
+   46           | RightOperand . tSUP RightOperand
+
+    tINF       décalage et aller à l'état 82
+    tSUP       décalage et aller à l'état 83
+    tEGALEGAL  décalage et aller à l'état 84
+
+    $défaut  réduction par utilisation de la règle 43 (Operations)
+
+
+État 103
+
+   55 ForCondition: tPO DeclarationIndice tPVIRG Bool . tPVIRG Affectation tPF
+
+    tPVIRG  décalage et aller à l'état 106
+
+
+État 104
 
    13 CallArgNext: tVIRG CallArgs .
 
     $défaut  réduction par utilisation de la règle 13 (CallArgNext)
 
 
-État 101
+État 105
 
    30 Ligne: Condition tAO $@1 Body tAF .
 
     $défaut  réduction par utilisation de la règle 30 (Ligne)
 
 
-État 102
+État 106
 
-   50 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG . Affectation tPF
+   55 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG . Affectation tPF
 
-    tID  décalage et aller à l'état 103
+    tID  décalage et aller à l'état 107
 
-    Affectation  aller à l'état 104
+    Affectation  aller à l'état 108
 
 
-État 103
+État 107
 
-   42 Affectation: tID . tEGAL RightOperand
+   47 Affectation: tID . tEGAL RightOperand
 
     tEGAL  décalage et aller à l'état 48
 
 
-État 104
+État 108
 
-   50 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation . tPF
+   55 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation . tPF
 
-    tPF  décalage et aller à l'état 105
+    tPF  décalage et aller à l'état 109
 
 
-État 105
+État 109
 
-   50 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF .
+   55 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF .
 
-    $défaut  réduction par utilisation de la règle 50 (ForCondition)
+    $défaut  réduction par utilisation de la règle 55 (ForCondition)

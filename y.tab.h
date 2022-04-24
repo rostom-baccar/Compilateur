@@ -76,8 +76,10 @@ extern int yydebug;
     tEGALEGAL = 282,
     tELIF = 283,
     tELSE = 284,
-    tNB = 285,
-    tID = 286
+    tAND = 285,
+    tOR = 286,
+    tNB = 287,
+    tID = 288
   };
 #endif
 /* Tokens.  */
@@ -108,8 +110,10 @@ extern int yydebug;
 #define tEGALEGAL 282
 #define tELIF 283
 #define tELSE 284
-#define tNB 285
-#define tID 286
+#define tAND 285
+#define tOR 286
+#define tNB 287
+#define tID 288
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -118,7 +122,7 @@ union YYSTYPE
 #line 17 "rules.y"
 int nb; char varchar[16];
 
-#line 122 "y.tab.h"
+#line 126 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

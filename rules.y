@@ -15,7 +15,7 @@ instruction * ti;
 %}
 
 %union {int nb; char varchar[16];}
-%token tEGAL tPO tPF tAO tAF tSOUS tADD tDIV tMUL tERR tPRINTF tMAIN tINT tSTR tCONST tVIRG tPVIRG tIF tWHILE tFOR tINF tSUP tINFEG tSUPEG tEGALEGAL tELIF tELSE
+%token tEGAL tPO tPF tAO tAF tSOUS tADD tDIV tMUL tERR tPRINTF tMAIN tINT tSTR tCONST tVIRG tPVIRG tIF tWHILE tFOR tINF tSUP tINFEG tSUPEG tEGALEGAL tELIF tELSE tAND tOR
 %token <nb> tNB
 %token <varchar> tID
 %type <nb> VarType
@@ -23,8 +23,9 @@ instruction * ti;
 %type <nb> Type
 %start Programme
 
-%left tADD tSOUS
-%left tMUL tDIV
+%left tADD tSOUS tMUL tDIV
+%left tOR tAND
+%left tEGALEGAL tINF tSUP
 
 %%
 
@@ -85,10 +86,12 @@ Ligne: Condition tAO {inc_depth();} Body tAF {
     
         // Si c'est un while, l'adresse de fin est augmentée de 1 car on ajoute
         // un jump qui fait partie du while.
-        sprintf(ti_addr, "%d", get_taille_ti());
+        sprintf(ti_addr, "%d", get_taille_ti()+1); // indice problématique n°1
     
         char * jmp = malloc(3);
-        sprintf(jmp, "%d", depiler_symbole(ts).initialise-1); // on dépile le tmp_while2
+        sprintf(jmp, "%d", depiler_symbole(ts).initialise); // on dépile le tmp_while2
+        // indice problématique n°2
+        
         ajouter_instruction(ti, "JMP", jmp, "_", "_");
     }
     // cas if
@@ -142,8 +145,7 @@ RightOperand: tID {
         yyerror(error);
     }
     
-    char * addr = malloc(3);
-    sprintf(addr, "%d", get_taille_ts());
+    char * addr = get_addr(ts, s.nomVariable, 0);
     
     ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), addr, "_");
 };
@@ -184,11 +186,49 @@ Operations: RightOperand tMUL RightOperand {
     ajouter_instruction(ti, "MUL", arg1, arg2, arg3);
 
 };
+Operations: RightOperand tAND RightOperand {
+    char * arg3 = depiler_addr(ts);
+    char * arg2 = depiler_addr(ts);
+    char * arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
+    ajouter_instruction(ti, "AND", arg1, arg2, arg3);
+
+};
+Operations: RightOperand tOR RightOperand {
+    char * arg3 = depiler_addr(ts);
+    char * arg2 = depiler_addr(ts);
+    char * arg1 = ajouter_symbole(ts, "tmp", "tmp", 0);
+    ajouter_instruction(ti, "OR", arg1, arg2, arg3);
+
+};
+Operations: RightOperand tEGALEGAL RightOperand {
+    char * op1 = depiler_addr(ts);
+    char * op2 = depiler_addr(ts);
+    
+    char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
+    ajouter_instruction(ti, "EQU", result_egal, op1, op2);
+};
+
+Operations: RightOperand tINF RightOperand {
+    char * op1 = depiler_addr(ts);
+    char * op2 = depiler_addr(ts);
+    
+    char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
+    ajouter_instruction(ti, "INF", result_egal, op2, op1);
+};
+
+Operations: RightOperand tSUP RightOperand {
+    char * op1 = depiler_addr(ts);
+    char * op2 = depiler_addr(ts);
+    
+    char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
+    ajouter_instruction(ti, "SUP", result_egal, op2, op1);
+};
+
 
 Affectation : tID tEGAL RightOperand {
     char * addr = get_addr(ts, $1, 0);
     ajouter_instruction(ti, "COP", addr, depiler_addr(ts), "_");
-    ts[strtol(addr, NULL, 10)].initialise = 1;
+    ts[strtol(addr, NULL, 10)].initialise = 1; // convertir char* en int
 };
 
 Condition: tFOR ForCondition;
@@ -300,33 +340,9 @@ ArgCondition: tPO Bool tPF;
 ForCondition: tPO DeclarationIndice tPVIRG Bool tPVIRG Affectation tPF;
 DeclarationIndice: Affectation | tID;
 
-Bool: Comparaison;
+Bool: Operations;
 Bool: tID {
     ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, $1, 0), "_");
-};
-
-Comparaison: RightOperand tEGALEGAL RightOperand {
-    char * op1 = depiler_addr(ts);
-    char * op2 = depiler_addr(ts);
-    
-    char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
-    ajouter_instruction(ti, "EQU", result_egal, op1, op2);
-};
-
-Comparaison: RightOperand tINF RightOperand {
-    char * op1 = depiler_addr(ts);
-    char * op2 = depiler_addr(ts);
-    
-    char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
-    ajouter_instruction(ti, "INF", result_egal, op2, op1);
-};
-
-Comparaison: RightOperand tSUP RightOperand {
-    char * op1 = depiler_addr(ts);
-    char * op2 = depiler_addr(ts);
-    
-    char * result_egal = ajouter_symbole(ts, "tmp", "result_condition", 0);
-    ajouter_instruction(ti, "SUP", result_egal, op2, op1);
 };
 
 
@@ -373,7 +389,7 @@ int main(void) {
   
   yyparse();
   //print_ts(ts);
-  //print_ti(ti);
+  print_ti(ti);
   write_from_table(ti);
   return 0;
 }

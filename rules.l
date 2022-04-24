@@ -46,6 +46,8 @@
 "/"	{return tDIV;}
 "<"	{return tINF;}
 ">"	{return tSUP;}
+"&&" {return tAND;}
+"||" {return tOR;}
 "<="	{return tINFEG;}
 ">="	{return tSUPEG;}
 [a-zA-Z]+[a-zA-Z0-9|_]* {
