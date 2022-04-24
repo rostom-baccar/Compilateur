@@ -2,18 +2,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "y.tab.h"
-int lineno = 1;
+//int lineno = 1;
 %}
 
 %option noyywrap
-%option nounput
-%option noinput
+%option nounput noinput
+%option yylineno
 
 %%
 
 
-[ \t]+  {};
-[\n]    {lineno++;}
+[ \t\n]+  {}
+
+\/\/.*\n?   {} // pour ce type de commentaire
+
+\/\*(.|[\r\n])*?\*\/  {} /* Pour ce type de commentaire */
 
 ","  {return tVIRG;}
 [0-9]+(e[0-9]+)? {

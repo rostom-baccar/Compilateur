@@ -12,3 +12,14 @@
 
 --> implémenter ou logique pour INFEG et SUPEG
 
+
+did-list
+-> commentaires //
+-> commentaires /* */ sur plusieurs lignes
+-> modifié compteur de lignes par celui intégré de base dans flex yylineno
+(sinon impossible de faire le /* */ et compter les \n à la main)
+-> débuggé le /* */ pendant environ 10 ans pour qu'il accept les /* * */ et les newline
+-> très fier d'avoir compris cette abomination de regex finale
+
+
+\/\*(.|[\r\n])*?\*\/ <- pas greedy

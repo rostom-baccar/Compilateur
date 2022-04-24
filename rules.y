@@ -8,7 +8,7 @@
 int varchar[16];
 int yylex(); //fix warning
 void yywarning(char *s);
-extern int lineno; // count the lines
+extern int yylineno; // count the lines
 
 symbole * ts;
 instruction * ti;
@@ -138,7 +138,7 @@ RightOperand: tID {
     
     if (s.initialise == 0) {
         char * error = malloc(100);
-        sprintf(error, "[%d] ERROR: Variable <%s> has not been initialized.\n", lineno, s.nomVariable);
+        sprintf(error, "[%d] ERROR: Variable <%s> has not been initialized.\n", yylineno, s.nomVariable);
         yyerror(error);
     }
     

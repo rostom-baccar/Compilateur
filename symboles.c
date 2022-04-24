@@ -6,7 +6,7 @@
 
 int taille = 0;
 int profondeurMAX = 0;
-extern int lineno;
+extern int yylineno;
 
 symbole* init_ts() {
     return malloc(TAILLE*sizeof(symbole*));
@@ -91,7 +91,7 @@ char * get_addr(symbole* tab, char* nom, int mode) {
     if (mode == 0) {
     
         char * error = malloc(100);
-        sprintf(error, "[%d] ERROR: Unknown variable <%s>.\n", lineno, nom);
+        sprintf(error, "[%d] ERROR: Unknown variable <%s>.\n", yylineno, nom);
         yyerror(error);
     }
     return "-1";
@@ -107,7 +107,7 @@ symbole get_symbole(symbole* tab, char* nom) {
     }
     
     char * error = malloc(100);
-    sprintf(error, "[%d] ERROR: Unknown variable <%s>.\n", lineno, nom);
+    sprintf(error, "[%d] ERROR: Unknown variable <%s>.\n", yylineno, nom);
     yyerror(error);
     exit(-1); // Inutile mais enlève le warning
 }
@@ -116,7 +116,7 @@ symbole get_symbole(symbole* tab, char* nom) {
 void raise_redefinition_error(symbole * ts, char* name) {
     if (strcmp(get_addr(ts, name, 1), "-1") != 0) {
         char * error = malloc(100);
-        sprintf(error, "[%d] ERROR: Redefinition of <%s>.\n", lineno, name);
+        sprintf(error, "[%d] ERROR: Redefinition of <%s>.\n", yylineno, name);
         yyerror(error);
     }
 }
@@ -140,7 +140,7 @@ char * depiler_verifier_symbole(symbole * ts, int errno) {
         case 0:
             if (!(strcmp(s.nomVariable, "result_end") == 0)) {
                 char * error = malloc(100);
-                sprintf(error, "[%d] ERROR: Unexpected statement before condition.\n", lineno);
+                sprintf(error, "[%d] ERROR: Unexpected statement before condition.\n", yylineno);
                 yyerror(error);
             }
             break;
@@ -148,7 +148,7 @@ char * depiler_verifier_symbole(symbole * ts, int errno) {
         case 1:
             if (!(strcmp(s.nomVariable, "result_condition") == 0)) {
                 char * error = malloc(100);
-                sprintf(error, "[%d] ERROR: An unexpected error has occurred.\n", lineno);
+                sprintf(error, "[%d] ERROR: An unexpected error has occurred.\n", yylineno);
                 yyerror(error);
             }
             break;
@@ -156,7 +156,7 @@ char * depiler_verifier_symbole(symbole * ts, int errno) {
         case 2:
             if (!(strcmp(s.nomVariable, "tmp_if") == 0)) {
                 char * error = malloc(100);
-                sprintf(error, "[%d] ERROR: An unexpected error has occurred.\n", lineno);
+                sprintf(error, "[%d] ERROR: An unexpected error has occurred.\n", yylineno);
                 yyerror(error);
             }
             break;
