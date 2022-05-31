@@ -586,8 +586,8 @@ static const yytype_int16 yyrline[] =
       51,    52,    54,    54,    56,    57,    57,    58,    59,    60,
       61,    61,   105,   117,   130,   131,   132,   138,   154,   161,
      168,   175,   182,   189,   196,   203,   211,   219,   228,   234,
-     235,   235,   247,   267,   315,   339,   340,   341,   341,   343,
-     344
+     235,   235,   247,   266,   314,   338,   339,   340,   340,   342,
+     343
 };
 #endif
 
@@ -1763,7 +1763,6 @@ yyreduce:
     // contient même adresse donc rien ne s'est passé du point de vue instruction
     char * result_end = ajouter_symbole(ts, "result_end", "tmp", 0);
 
-    ajouter_instruction(ti, "COP", result_end, condition, "_");
     
     
     // taille_ti correspond à l'index du Jump du if dans la table d'instruction
@@ -1774,11 +1773,11 @@ yyreduce:
     // modifier l'adresse de ligne de retour -> dans le symbole tmp_if
     ajouter_instruction(ti, "JMF", condition, "-1", "_");
 }
-#line 1778 "y.tab.c"
+#line 1777 "y.tab.c"
     break;
 
   case 53:
-#line 267 "rules.y"
+#line 266 "rules.y"
                               {
 
     // Opération : !end && cond_elif
@@ -1827,11 +1826,11 @@ yyreduce:
     
     
 }
-#line 1831 "y.tab.c"
+#line 1830 "y.tab.c"
     break;
 
   case 54:
-#line 315 "rules.y"
+#line 314 "rules.y"
                  {
 
     // on supprime la variable temporaire qui correspond à la condition
@@ -1856,19 +1855,19 @@ yyreduce:
     
     
 }
-#line 1860 "y.tab.c"
+#line 1859 "y.tab.c"
     break;
 
   case 60:
-#line 344 "rules.y"
+#line 343 "rules.y"
           {
     ajouter_instruction(ti, "COP", ajouter_symbole(ts, "tmp", "tmp", 0), get_addr(ts, (yyvsp[0].varchar), 0), "_");
 }
-#line 1868 "y.tab.c"
+#line 1867 "y.tab.c"
     break;
 
 
-#line 1872 "y.tab.c"
+#line 1871 "y.tab.c"
 
       default: break;
     }
@@ -2100,7 +2099,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 373 "rules.y"
+#line 372 "rules.y"
 
 void yyerror(char *s) { fprintf(stderr, "%s\n", s); free(s); exit(-1); }
 void yywarning(char *s) { printf("%s\n", s); }

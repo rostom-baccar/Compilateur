@@ -3,6 +3,9 @@ gcc lex.yy.c -o resultat
 ./resultat
 
 
+make test (le test doit s'appeler test.c)
+
+
 
 /// DEBUG ///
 vi y.output

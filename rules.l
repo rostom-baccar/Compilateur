@@ -16,7 +16,10 @@
 
 \/\/.*\n?   {} // pour ce type de commentaire
 
-\/\*(.|[\r\n])*?\*\/  {} /* Pour ce type de commentaire */
+
+\/\*([^\*]|\*[^\/])*\*\/ {} /* Pour ce type de commentaire  avant : \/\*(.|[\r\n])*?\*\/  {}*/
+
+
 
 ","  {return tVIRG;}
 [0-9]+(e[0-9]+)? {

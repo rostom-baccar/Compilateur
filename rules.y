@@ -62,7 +62,7 @@ Ligne: Condition tAO {inc_depth();} Body tAF {
 
     // En sortie d'une condition if, else if et else, la pile de symboles est comme ça :
     // 1:tmp_if (initialise contient la position de l'instruction à modifier)
-    // 3:result_end (important pour la suite des conditions, n'existe pas pour les else)
+    // 2:result_end (important pour la suite des conditions, n'existe pas pour les else)
 
     supprimer_symbole(ts);
     dec_depth();
@@ -251,8 +251,6 @@ Condition: tIF ArgCondition {
     // on dépile et remet juste après car besoin ensuite pour les elif/else
     // contient même adresse donc rien ne s'est passé du point de vue instruction
     char * result_end = ajouter_symbole(ts, "result_end", "tmp", 0);
-
-    ajouter_instruction(ti, "COP", result_end, condition, "_");
     
     
     // taille_ti correspond à l'index du Jump du if dans la table d'instruction

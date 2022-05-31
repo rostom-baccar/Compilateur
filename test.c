@@ -14,7 +14,7 @@ int main() {
     
     int i = 1;
     
-    // ce while est une blague
+    // attention à la condition
     while (0 < i == 1) {
     
         if (i == 3) {
@@ -24,6 +24,12 @@ int main() {
         i = i + 1;
     
     }
+    /*
+     *
+     * Deuxième commentaire
+     *
+     *
+     */
     printf(i);
     
 }
